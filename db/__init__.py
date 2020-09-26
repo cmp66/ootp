@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String
 
 engine = create_engine('sqlite:///:memory', echo=True)
 
@@ -9,6 +10,7 @@ class Player(Base):
     __tablename__ = 'players'
 
     id = Column(Integer, primary_key = True)
+    position = Column(String(20))
     name = Column(String(64))
     team = Column(String(20))
     org = Column(String(10))
@@ -39,9 +41,10 @@ class Player(Base):
     majorleaguedays = Column(Integer)
     proyears = Column(Integer)
     draftleague = Column(String)
-    draftteam = Column(Integer)
+    draftteam = Column(String)
     draftyear = Column(Integer)
     draftround = Column(Integer)
+    draftsupplimental = Column(Integer)
     draftpick = Column(Integer)
     overallpick= Column(Integer)
     discoveryyear = Column(Integer)
@@ -142,14 +145,14 @@ class PlayerPitching(Base):
 
 
 class PlayerFielding(Base):
-     __tablename__ = 'playerfielding'
+    __tablename__ = 'playerfielding'
 
     playerid = Column(Integer, primary_key = True)
     name = Column(String(64))
     team = Column(String(64))
     infieldrange = Column(Integer)
     infieldarm = Column(Integer)
-    turndoubleplay Column(Integer)
+    turndoubleplay = Column(Integer)
     infielderror = Column(Integer)
     outfieldrange = Column(Integer)
     outfieldarm = Column(Integer)
