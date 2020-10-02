@@ -2,4 +2,4 @@
 
 .vscode/**
 
-**/_pycache__
+_pycache__/**
