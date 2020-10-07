@@ -172,7 +172,3 @@ class PlayerFielding(Base):
 
     def __repr__(self):
         return f'<PlayerFielding(id={self.id}, name={self.name})>'
-
-
-
-
