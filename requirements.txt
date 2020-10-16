@@ -1,4 +1,5 @@
-sqlalchemy
 beautifulsoup4
-lxml
 html5lib
+mysql-connector-python
+lxml
+sqlalchemy

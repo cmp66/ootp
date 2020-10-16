@@ -5,63 +5,65 @@ import datetime
 
 class OOTPParser():
 
-    def parse_player_file(self, playerfile):
+    def parse_player_file(self, playerfile, import_date):
         parser = BeautifulSoup(playerfile, 'lxml')
         parsed_players = []
 
         player_table = parser.body.table.table
         players = player_table.find_all('tr')[1:]
         for player in players:
-            parsed_players.append(self.create_player_record(player))
+            parsed_players.append(self.create_player_record(player, import_date))
 
         return parsed_players
 
-    def parse_batting_file(self, playerfile):
+    def parse_batting_file(self, playerfile, import_date):
         parser = BeautifulSoup(playerfile, 'lxml')
         parsed_players = []
 
         player_table = parser.body.table.table
         players = player_table.find_all('tr')[1:]
         for player in players:
-            parsed_players.append(self.create_batting_record(player))
+            parsed_players.append(self.create_batting_record(player, import_date))
 
         return parsed_players
 
-    def parse_fielding_file(self, playerfile):
+    def parse_fielding_file(self, playerfile, import_date):
         parser = BeautifulSoup(playerfile, 'lxml')
         parsed_players = []
 
         player_table = parser.body.table.table
         players = player_table.find_all('tr')[1:]
         for player in players:
-            parsed_players.append(self.create_fielding_record(player))
+            parsed_players.append(self.create_fielding_record(player, import_date))
 
         return parsed_players
 
-    def parse_pitching_file(self, playerfile):
+    def parse_pitching_file(self, playerfile, import_date):
         parser = BeautifulSoup(playerfile, 'lxml')
         parsed_players = []
 
         player_table = parser.body.table.table
         players = player_table.find_all('tr')[1:]
         for player in players:
-            parsed_players.append(self.create_pitching_record(player))
+            parsed_players.append(self.create_pitching_record(player, import_date))
 
         return parsed_players
 
-    def create_player_record(self, player_parser):
+    def create_player_record(self, player_parser, import_date):
         attributes = player_parser.find_all('td')
         player = Player()
         player.id = int(attributes[0].string)
+        player.timestamp = import_date
         player.position = attributes[1].string
         player.name = attributes[2].string
         player.team = attributes[3].string
+        print(f'ORG: {attributes[4].string}')
         player.org = attributes[4].string
         player.league = attributes[5].string
         player.level = attributes[6].string
         player.dob = datetime.datetime.strptime(attributes[7].string, '%m/%d/%Y')
         player.age = attributes[8].string
-        player.height = attributes[9].string
+        player.height = self._convert_height(attributes[9].string)
         player.weight = int(attributes[10].string.split(" ")[0])
         player.bats = attributes[11].string
         player.throws = attributes[12].string
@@ -100,11 +102,12 @@ class OOTPParser():
 
         return player
 
-    def create_batting_record(self, player_parser):
+    def create_batting_record(self, player_parser, import_date):
         attributes = player_parser.find_all('td')
         player = PlayerBatting()
         
-        player.id = int(attributes[0].string)
+        player.playerid = int(attributes[0].string)
+        player.timestamp = import_date
         player.name = attributes[1].string
         player.contactrating = int(attributes[2].string)
         player.gaprating = int(attributes[3].string)
@@ -137,11 +140,12 @@ class OOTPParser():
 
         return player
 
-    def create_fielding_record(self, player_parser):
+    def create_fielding_record(self, player_parser, import_date):
         attributes = player_parser.find_all('td')
         player = PlayerFielding()
 
-        player.id = int(attributes[0].string)
+        player.playerid = int(attributes[0].string)
+        player.timestamp = import_date
         player.name = attributes[1].string
         player.infieldrange = int(attributes[3].string)
         player.infieldarm = int(attributes[4].string)
@@ -165,18 +169,21 @@ class OOTPParser():
 
         return player
 
-    def create_pitching_record(self, player_parser):
+    def create_pitching_record(self, player_parser, import_date):
         attributes = player_parser.find_all('td')
         player = PlayerPitching()
         print(f'name: {attributes[1].string}')
 
-        player.id = int(attributes[0].string)
+        player.playerid = int(attributes[0].string)
+        player.timestamp = import_date
         player.name = attributes[1].string
 
         player.stuffrating = int(attributes[3].string)
         player.movementrating =  int(attributes[4].string)
         player.controlrating =  int(attributes[5].string)
         player.stuffvleft =  int(attributes[6].string)
+        player.movementvleft = 0
+        player.controlvleft = 0
         player.stuffvright =  int(attributes[7].string)
         player.movementvright =  int(attributes[8].string)
         player.controlvright =  int(attributes[9].string)
@@ -223,3 +230,12 @@ class OOTPParser():
             return "0"
         else:
             return value.split(" ")[0]
+
+    @classmethod
+    def _convert_height(cls, height):
+        H_feet = height.split("'")[0]
+        H_inch = height.split(" ")[1].split("\"")[0]
+
+        H_inches = int(H_feet) * 12 + int(H_inch)
+
+        return H_inches
