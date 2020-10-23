@@ -3,65 +3,65 @@ from bs4 import UnicodeDammit
 from db import Player, PlayerBatting, PlayerFielding, PlayerPitching, PlayerStats
 import datetime
 
-class OOTPParser():
 
+class OOTPParser:
     def parse_player_file(self, playerfile, import_date):
-        parser = BeautifulSoup(playerfile, 'lxml')
+        parser = BeautifulSoup(playerfile, "lxml")
         parsed_players = []
 
         player_table = parser.body.table.table
-        players = player_table.find_all('tr')[1:]
+        players = player_table.find_all("tr")[1:]
         for player in players:
             parsed_players.append(self.create_player_record(player, import_date))
 
         return parsed_players
 
     def parse_batting_file(self, playerfile, import_date):
-        parser = BeautifulSoup(playerfile, 'lxml')
+        parser = BeautifulSoup(playerfile, "lxml")
         parsed_players = []
 
         player_table = parser.body.table.table
-        players = player_table.find_all('tr')[1:]
+        players = player_table.find_all("tr")[1:]
         for player in players:
             parsed_players.append(self.create_batting_record(player, import_date))
 
         return parsed_players
 
     def parse_fielding_file(self, playerfile, import_date):
-        parser = BeautifulSoup(playerfile, 'lxml')
+        parser = BeautifulSoup(playerfile, "lxml")
         parsed_players = []
 
         player_table = parser.body.table.table
-        players = player_table.find_all('tr')[1:]
+        players = player_table.find_all("tr")[1:]
         for player in players:
             parsed_players.append(self.create_fielding_record(player, import_date))
 
         return parsed_players
 
     def parse_pitching_file(self, playerfile, import_date):
-        parser = BeautifulSoup(playerfile, 'lxml')
+        parser = BeautifulSoup(playerfile, "lxml")
         parsed_players = []
 
         player_table = parser.body.table.table
-        players = player_table.find_all('tr')[1:]
+        players = player_table.find_all("tr")[1:]
         for player in players:
             parsed_players.append(self.create_pitching_record(player, import_date))
 
         return parsed_players
 
     def parse_stats_file(self, playerfile, season):
-        parser = BeautifulSoup(playerfile, 'lxml')
+        parser = BeautifulSoup(playerfile, "lxml")
         parsed_players = []
 
         player_table = parser.body.table.table
-        players = player_table.find_all('tr')[1:]
+        players = player_table.find_all("tr")[1:]
         for player in players:
             parsed_players.append(self.create_stats_record(player, season))
 
         return parsed_players
 
     def create_player_record(self, player_parser, import_date):
-        attributes = player_parser.find_all('td')
+        attributes = player_parser.find_all("td")
         player = Player()
         player.id = int(attributes[0].string)
         player.timestamp = import_date
@@ -71,7 +71,7 @@ class OOTPParser():
         player.org = attributes[4].string
         player.league = attributes[5].string
         player.level = attributes[6].string
-        player.dob = datetime.datetime.strptime(attributes[7].string, '%m/%d/%Y')
+        player.dob = datetime.datetime.strptime(attributes[7].string, "%m/%d/%Y")
         player.age = attributes[8].string
         player.height = self._convert_height(attributes[9].string)
         player.weight = int(attributes[10].string.split(" ")[0])
@@ -98,8 +98,8 @@ class OOTPParser():
         player.draftteam = attributes[31].string
         player.draftyear = int(attributes[32].string)
 
-        if 'S' in attributes[33].string:
-            player.draftround = int(attributes[33].string.replace('S', ''))
+        if "S" in attributes[33].string:
+            player.draftround = int(attributes[33].string.replace("S", ""))
             player.draftsupplimental = 1
         else:
             player.draftround = int(attributes[33].string)
@@ -113,9 +113,9 @@ class OOTPParser():
         return player
 
     def create_batting_record(self, player_parser, import_date):
-        attributes = player_parser.find_all('td')
+        attributes = player_parser.find_all("td")
         player = PlayerBatting()
-        
+
         player.playerid = int(attributes[0].string)
         player.timestamp = import_date
         player.name = attributes[1].string
@@ -151,7 +151,7 @@ class OOTPParser():
         return player
 
     def create_fielding_record(self, player_parser, import_date):
-        attributes = player_parser.find_all('td')
+        attributes = player_parser.find_all("td")
         player = PlayerFielding()
 
         player.playerid = int(attributes[0].string)
@@ -166,7 +166,9 @@ class OOTPParser():
         player.outfielderror = int(attributes[9].string)
         player.catcherarm = int(attributes[10].string)
         player.catcherability = int(attributes[11].string)
-        player.primarydefensiverating = int(self._convert_unknown(attributes[12].string))
+        player.primarydefensiverating = int(
+            self._convert_unknown(attributes[12].string)
+        )
         player.pitcherrating = int(self._convert_unknown(attributes[13].string))
         player.catcherrating = int(self._convert_unknown(attributes[14].string))
         player.firstbaserating = int(self._convert_unknown(attributes[15].string))
@@ -180,7 +182,7 @@ class OOTPParser():
         return player
 
     def create_pitching_record(self, player_parser, import_date):
-        attributes = player_parser.find_all('td')
+        attributes = player_parser.find_all("td")
         player = PlayerPitching()
 
         player.playerid = int(attributes[0].string)
@@ -188,24 +190,24 @@ class OOTPParser():
         player.name = attributes[1].string
 
         player.stuffrating = int(attributes[3].string)
-        player.movementrating =  int(attributes[4].string)
-        player.controlrating =  int(attributes[5].string)
-        player.stuffvleft =  int(attributes[6].string)
+        player.movementrating = int(attributes[4].string)
+        player.controlrating = int(attributes[5].string)
+        player.stuffvleft = int(attributes[6].string)
         player.movementvleft = int(attributes[7].string)
         player.controlvleft = int(attributes[8].string)
-        player.stuffvright =  int(attributes[9].string)
-        player.movementvright =  int(attributes[10].string)
-        player.controlvright =  int(attributes[11].string)
-        player.stuffpotential =  int(attributes[12].string)
-        player.movementpotential =  int(attributes[13].string)
-        player.controlpotential =  int(attributes[14].string)
-        player.fastballrating =  int(self._convert_unknown(attributes[15].string))
-        player.fastballpotential =  int(self._convert_unknown(attributes[16].string))
-        player.changeuprating =  int(self._convert_unknown(attributes[17].string))
-        player.changeuppotential =  int(self._convert_unknown(attributes[18].string))
-        player.curveballrating =  int(self._convert_unknown(attributes[19].string))
-        player.curveballpotential =  int(self._convert_unknown(attributes[20].string))
-        player.sliderrating =  int(self._convert_unknown(attributes[21].string))
+        player.stuffvright = int(attributes[9].string)
+        player.movementvright = int(attributes[10].string)
+        player.controlvright = int(attributes[11].string)
+        player.stuffpotential = int(attributes[12].string)
+        player.movementpotential = int(attributes[13].string)
+        player.controlpotential = int(attributes[14].string)
+        player.fastballrating = int(self._convert_unknown(attributes[15].string))
+        player.fastballpotential = int(self._convert_unknown(attributes[16].string))
+        player.changeuprating = int(self._convert_unknown(attributes[17].string))
+        player.changeuppotential = int(self._convert_unknown(attributes[18].string))
+        player.curveballrating = int(self._convert_unknown(attributes[19].string))
+        player.curveballpotential = int(self._convert_unknown(attributes[20].string))
+        player.sliderrating = int(self._convert_unknown(attributes[21].string))
         player.sliderpotential = int(self._convert_unknown(attributes[22].string))
         player.splitterrating = int(self._convert_unknown(attributes[23].string))
         player.splitterpotential = int(self._convert_unknown(attributes[24].string))
@@ -233,7 +235,7 @@ class OOTPParser():
         return player
 
     def create_stats_record(self, player_parser, season):
-        attributes = player_parser.find_all('td')
+        attributes = player_parser.find_all("td")
         player = PlayerStats()
 
         player.playerid = int(attributes[1].string)
@@ -250,18 +252,17 @@ class OOTPParser():
 
         return player
 
-    
     @classmethod
     def _convert_unknown(cls, value):
-        if value == '-':
+        if value == "-":
             return "0"
         elif value[0] == "$":
-            return value[1:].replace(',', '')
-        elif value == 'Free agent':
+            return value[1:].replace(",", "")
+        elif value == "Free agent":
             return "0"
-        elif '-' in value:
+        elif "-" in value:
             velocities = value.split(" ")[0].split("-")
-            return int((int(velocities[0])+ int(velocities[1]))/2)
+            return int((int(velocities[0]) + int(velocities[1])) / 2)
         elif "100+" in value:
             return 101
         else:
@@ -270,7 +271,7 @@ class OOTPParser():
     @classmethod
     def _convert_height(cls, height):
         H_feet = height.split("'")[0]
-        H_inch = height.split(" ")[1].split("\"")[0]
+        H_inch = height.split(" ")[1].split('"')[0]
 
         H_inches = int(H_feet) * 12 + int(H_inch)
 

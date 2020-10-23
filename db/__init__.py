@@ -3,14 +3,16 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
+import os
 
 Base = declarative_base()
 
-class Player(Base):
-    __tablename__ = 'players'
 
-    id = Column(Integer, primary_key = True)
-    timestamp = Column(Date, primary_key = True)
+class Player(Base):
+    __tablename__ = "players"
+
+    id = Column(Integer, primary_key=True)
+    timestamp = Column(Date, primary_key=True)
     position = Column(String(20))
     name = Column(String(64))
     team = Column(String(32))
@@ -47,18 +49,19 @@ class Player(Base):
     draftround = Column(Integer)
     draftsupplimental = Column(Integer)
     draftpick = Column(Integer)
-    overallpick= Column(Integer)
+    overallpick = Column(Integer)
     discoveryyear = Column(Integer)
     discoveryteam = Column(String(32))
 
     def __repr__(self):
-        return f'<Player(id={self.id}, name={self.name})>'
+        return f"<Player(id={self.id}, name={self.name})>"
+
 
 class PlayerBatting(Base):
     __tablename__ = "playerbatting"
 
-    playerid = Column(Integer, ForeignKey("players.id"), primary_key = True)
-    timestamp = Column(Date, primary_key = True)
+    playerid = Column(Integer, ForeignKey("players.id"), primary_key=True)
+    timestamp = Column(Date, primary_key=True)
     name = Column(String(64))
     contactrating = Column(Integer)
     gaprating = Column(Integer)
@@ -90,14 +93,14 @@ class PlayerBatting(Base):
     baserunningrating = Column(Integer)
 
     def __repr__(self):
-        return f'<PlayerBatting(id={self.playerid}, name={self.name})>'
+        return f"<PlayerBatting(id={self.playerid}, name={self.name})>"
 
 
 class PlayerPitching(Base):
-    __tablename__ = 'playerpitching'
+    __tablename__ = "playerpitching"
 
-    playerid = Column(Integer, ForeignKey("players.id"), primary_key = True)
-    timestamp = Column(Date, primary_key = True)
+    playerid = Column(Integer, ForeignKey("players.id"), primary_key=True)
+    timestamp = Column(Date, primary_key=True)
     name = Column(String(64))
     team = Column(String(64))
     stuffrating = Column(Integer)
@@ -144,14 +147,14 @@ class PlayerPitching(Base):
     stamina = Column(Integer)
 
     def __repr__(self):
-        return f'<PlayerPitching(id={self.playerid}, name={self.name})>'
+        return f"<PlayerPitching(id={self.playerid}, name={self.name})>"
 
 
 class PlayerFielding(Base):
-    __tablename__ = 'playerfielding'
+    __tablename__ = "playerfielding"
 
-    playerid = Column(Integer, ForeignKey("players.id"), primary_key = True)
-    timestamp = Column(Date, primary_key = True)
+    playerid = Column(Integer, ForeignKey("players.id"), primary_key=True)
+    timestamp = Column(Date, primary_key=True)
     name = Column(String(64))
     team = Column(String(64))
     infieldrange = Column(Integer)
@@ -175,13 +178,14 @@ class PlayerFielding(Base):
     rightfieldrating = Column(Integer)
 
     def __repr__(self):
-        return f'<PlayerFielding(id={self.playerid}, name={self.name})>'
+        return f"<PlayerFielding(id={self.playerid}, name={self.name})>"
+
 
 class PlayerStats(Base):
-    __tablename__ = 'playerstats'
+    __tablename__ = "playerstats"
 
-    playerid = Column(Integer, ForeignKey("players.id"), primary_key = True)
-    season = Column(Integer, primary_key = True)
+    playerid = Column(Integer, ForeignKey("players.id"), primary_key=True)
+    season = Column(Integer, primary_key=True)
     position = Column(String(32))
     name = Column(String(64))
     plateapp = Column(Integer)
@@ -193,22 +197,24 @@ class PlayerStats(Base):
     defeff = Column(Float)
 
 
-
-
-class OOTPDbAccess():
-
-    def __init__(self, type, host, user, password):   
-        if type == 'mysql':
-            print(f'Creating mysql db connection to {host}')
-            self.engine = create_engine(f'mysql+pymysql://{user}:{password}@{host}:3306/ootp',
-    echo=False)
+class OOTPDbAccess:
+    def __init__(self):
+        type = os.environ["DB_TYPE"]
+        host = os.environ["DB_HOST"]
+        user = os.environ["DB_USERNAME"]
+        password = os.environ["DB_PASSWORD"]
+        if type == "mysql":
+            print(f"Creating mysql db connection to {host}")
+            self.engine = create_engine(
+                f"mysql+pymysql://{user}:{password}@{host}:3306/ootp", echo=False
+            )
             Base.metadata.create_all(self.engine)
         else:
-            print('Creating sqllite connnection')
-            self.engine = create_engine('sqlite:///:memory', echo=True)
-        Session  = sessionmaker(bind=self.engine)
+            print("Creating sqllite connnection")
+            self.engine = create_engine("sqlite:///:memory", echo=True)
+        Session = sessionmaker(bind=self.engine)
         self.session = Session()
-        print ("Session Created")
+        print("Session Created")
 
     def get_session(self):
         return self.session
@@ -217,9 +223,14 @@ class OOTPDbAccess():
         pass
 
     def add_player_record(self, player_record):
-        existing_player = self.session.query(Player).filter_by(id=player_record.id).filter_by(timestamp=player_record.timestamp).first()
+        existing_player = (
+            self.session.query(Player)
+            .filter_by(id=player_record.id)
+            .filter_by(timestamp=player_record.timestamp)
+            .first()
+        )
         if existing_player is None:
-            print(f'adding player {player_record.name}')
+            print(f"adding player {player_record.name}")
             self.session.add(player_record)
         else:
             self._update_existing_player(existing_player, player_record)
@@ -227,53 +238,76 @@ class OOTPDbAccess():
         self.session.commit()
 
     def add_player_batting_record(self, player_batting_record):
-        existing_user = self.session.query(PlayerBatting).filter_by(playerid=player_batting_record.playerid).filter_by(timestamp=player_batting_record.timestamp).first()
+        existing_user = (
+            self.session.query(PlayerBatting)
+            .filter_by(playerid=player_batting_record.playerid)
+            .filter_by(timestamp=player_batting_record.timestamp)
+            .first()
+        )
         if existing_user is None:
-            print(f'adding batting record for player {player_batting_record.name}')
+            print(f"adding batting record for player {player_batting_record.name}")
             self.session.add(player_batting_record)
             self.session.commit()
 
     def add_player_fielding_record(self, player_fielding_record):
-        existing_user = self.session.query(PlayerFielding).filter_by(playerid=player_fielding_record.playerid).filter_by(timestamp=player_fielding_record.timestamp).first()
+        existing_user = (
+            self.session.query(PlayerFielding)
+            .filter_by(playerid=player_fielding_record.playerid)
+            .filter_by(timestamp=player_fielding_record.timestamp)
+            .first()
+        )
         if existing_user is None:
-            print(f'adding fielding record for player {player_fielding_record.name}')
+            print(f"adding fielding record for player {player_fielding_record.name}")
             self.session.add(player_fielding_record)
             self.session.commit()
 
     def add_player_pitching_record(self, player_pitching_record):
-        existing_user = self.session.query(PlayerPitching).filter_by(playerid=player_pitching_record.playerid).filter_by(timestamp=player_pitching_record.timestamp).first()
+        existing_user = (
+            self.session.query(PlayerPitching)
+            .filter_by(playerid=player_pitching_record.playerid)
+            .filter_by(timestamp=player_pitching_record.timestamp)
+            .first()
+        )
         if existing_user is None:
-            print(f'adding pitching record for player {player_pitching_record.name}')
+            print(f"adding pitching record for player {player_pitching_record.name}")
             self.session.add(player_pitching_record)
             self.session.commit()
 
     def add_player_stats_record(self, player_stats_record):
         try:
-            existing_user = self.session.query(Player).filter_by(id=player_stats_record.playerid).first()
+            existing_user = (
+                self.session.query(Player)
+                .filter_by(id=player_stats_record.playerid)
+                .first()
+            )
             if existing_user is None:
                 return
-            existing_record = self.session.query(PlayerStats).filter_by(playerid=player_stats_record.playerid).filter_by(season=player_stats_record.season).first()
+            existing_record = (
+                self.session.query(PlayerStats)
+                .filter_by(playerid=player_stats_record.playerid)
+                .filter_by(season=player_stats_record.season)
+                .first()
+            )
         except InvalidRequestError:
             return
         if existing_record is None:
-            print(f'adding stats record for player {player_stats_record.name}')
+            print(f"adding stats record for player {player_stats_record.name}")
             self.session.add(player_stats_record)
             try:
                 self.session.commit()
             except IntegrityError:
-                print ("Integrity Error")
+                print("Integrity Error")
                 return
             except InvalidRequestError:
-                print ("InvalidRequestError Error")
+                print("InvalidRequestError Error")
                 return
 
     def get_stats_by_season(self, season):
-        return self.session.query(PlayerStats).filter(PlayerStats.season==season).limit(10000)
+        return (
+            self.session.query(PlayerStats)
+            .filter(PlayerStats.season == season)
+            .limit(10000)
+        )
 
     def get_player_by_id(self, id):
-        return self.session.query(Player).filter(Player.id==id).first()
-
-
-
-
-
+        return self.session.query(Player).filter(Player.id == id).first()
