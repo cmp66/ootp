@@ -42,24 +42,35 @@ def importPlayerPitching(filename, import_date, db_access):
     for player in players:
         db_access.add_player_pitching_record(player)
 
+def importPlayerStats(filename, season, db_access):
+    player_parser = OOTPParser()
+    if os.path.isfile(filename):
+        with open(filename, 'r', encoding='windows-1252') as handle:
+            players = player_parser.parse_stats_file(handle, season)
+
+    for player in players:
+        db_access.add_player_stats_record(player)
+
 db_access = OOTPDbAccess('mysql', 'localhost', 'ootp', 'ootp--11oo')
-import_date = datetime.datetime.strptime('04/01/2056', '%m/%d/%Y')
-importBasePlayer('./files/MLB-Player.html', import_date, db_access)
-importPlayerBatting("./files/MLB-Batting.html", import_date, db_access)
-importPlayerFielding("./files/MLB-Fielding.html", import_date, db_access)
-importPlayerPitching("./files/MLB-Pitching.html", import_date, db_access)
-importBasePlayer('./files/FS-Player.html', import_date, db_access)
-importPlayerBatting("./files/FS-Batting.html", import_date, db_access)
-importPlayerFielding("./files/FS-Fielding.html", import_date, db_access)
-importPlayerPitching("./files/FS-Pitching.html", import_date, db_access)
-importBasePlayer('./files/SS-Player.html', import_date, db_access)
-importPlayerBatting("./files/SS-Batting.html", import_date, db_access)
-importPlayerFielding("./files/SS-Fielding.html", import_date, db_access)
-importPlayerPitching("./files/SS-Pitching.html", import_date, db_access)
-importBasePlayer('./files/INT-Player.html', import_date, db_access)
-importPlayerBatting("./files/INT-Batting.html", import_date, db_access)
-importPlayerFielding("./files/INT-Fielding.html", import_date, db_access)
-importPlayerPitching("./files/INT-Pitching.html", import_date, db_access)
+import_date = datetime.datetime.strptime('08/07/2056', '%m/%d/%Y')
+season = 2056
+importBasePlayer('./files/07-Aug-2056/MLB-Player.html', import_date, db_access)
+importPlayerBatting("./files/07-Aug-2056/MLB-Batting.html", import_date, db_access)
+importPlayerFielding("./files/07-Aug-2056/MLB-Fielding.html", import_date, db_access)
+importPlayerPitching("./files/07-Aug-2056/MLB-Pitching.html", import_date, db_access)
+importBasePlayer('./files/07-Aug-2056/FS-Player.html', import_date, db_access)
+importPlayerBatting("./files/07-Aug-2056/FS-Batting.html", import_date, db_access)
+importPlayerFielding("./files/07-Aug-2056/FS-Fielding.html", import_date, db_access)
+importPlayerPitching("./files/07-Aug-2056/FS-Pitching.html", import_date, db_access)
+importBasePlayer('./files/07-Aug-2056/SS-Player.html', import_date, db_access)
+importPlayerBatting("./files/07-Aug-2056/SS-Batting.html", import_date, db_access)
+importPlayerFielding("./files/07-Aug-2056/SS-Fielding.html", import_date, db_access)
+importPlayerPitching("./files/07-Aug-2056/SS-Pitching.html", import_date, db_access)
+importBasePlayer('./files/07-Aug-2056/INT-Player.html', import_date, db_access)
+importPlayerBatting("./files/07-Aug-2056/INT-Batting.html", import_date, db_access)
+importPlayerFielding("./files/07-Aug-2056/INT-Fielding.html", import_date, db_access)
+importPlayerPitching("./files/07-Aug-2056/INT-Pitching.html", import_date, db_access)
+importPlayerStats("./files/07-Aug-2056/MLB-Stats-07-Aug-2056.html", season, db_access)
 
 
 

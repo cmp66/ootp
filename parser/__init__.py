@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from bs4 import UnicodeDammit
-from db import Player, PlayerBatting, PlayerFielding, PlayerPitching
+from db import Player, PlayerBatting, PlayerFielding, PlayerPitching, PlayerStats
 import datetime
 
 class OOTPParser():
@@ -49,6 +49,17 @@ class OOTPParser():
 
         return parsed_players
 
+    def parse_stats_file(self, playerfile, season):
+        parser = BeautifulSoup(playerfile, 'lxml')
+        parsed_players = []
+
+        player_table = parser.body.table.table
+        players = player_table.find_all('tr')[1:]
+        for player in players:
+            parsed_players.append(self.create_stats_record(player, season))
+
+        return parsed_players
+
     def create_player_record(self, player_parser, import_date):
         attributes = player_parser.find_all('td')
         player = Player()
@@ -57,7 +68,6 @@ class OOTPParser():
         player.position = attributes[1].string
         player.name = attributes[2].string
         player.team = attributes[3].string
-        print(f'ORG: {attributes[4].string}')
         player.org = attributes[4].string
         player.league = attributes[5].string
         player.level = attributes[6].string
@@ -172,7 +182,6 @@ class OOTPParser():
     def create_pitching_record(self, player_parser, import_date):
         attributes = player_parser.find_all('td')
         player = PlayerPitching()
-        print(f'name: {attributes[1].string}')
 
         player.playerid = int(attributes[0].string)
         player.timestamp = import_date
@@ -182,43 +191,65 @@ class OOTPParser():
         player.movementrating =  int(attributes[4].string)
         player.controlrating =  int(attributes[5].string)
         player.stuffvleft =  int(attributes[6].string)
-        player.movementvleft = 0
-        player.controlvleft = 0
-        player.stuffvright =  int(attributes[7].string)
-        player.movementvright =  int(attributes[8].string)
-        player.controlvright =  int(attributes[9].string)
-        player.fastballrating =  int(self._convert_unknown(attributes[10].string))
-        player.fastballpotential =  int(self._convert_unknown(attributes[11].string))
-        player.changeuprating =  int(self._convert_unknown(attributes[12].string))
-        player.changeuppotential =  int(self._convert_unknown(attributes[13].string))
-        player.curveballrating =  int(self._convert_unknown(attributes[14].string))
-        player.curveballpotential =  int(self._convert_unknown(attributes[15].string))
-        player.sliderrating =  int(self._convert_unknown(attributes[16].string))
-        player.sliderpotential = int(self._convert_unknown(attributes[17].string))
-        player.splitterrating = int(self._convert_unknown(attributes[20].string))
-        player.splitterpotential = int(self._convert_unknown(attributes[21].string))
-        player.sinkerrating = int(self._convert_unknown(attributes[18].string))
-        player.sinkerpotential = int(self._convert_unknown(attributes[19].string))
-        player.cutterrating = int(self._convert_unknown(attributes[22].string))
-        player.cutterpotential = int(self._convert_unknown(attributes[23].string))
-        player.forkballrating = int(self._convert_unknown(attributes[24].string))
-        player.forkballpotential = int(self._convert_unknown(attributes[25].string))
-        player.circlechangerating = int(self._convert_unknown(attributes[26].string))
-        player.circlechangepotential = int(self._convert_unknown(attributes[27].string))
-        player.screwballrating = int(self._convert_unknown(attributes[28].string))
-        player.screwballpotential = int(self._convert_unknown(attributes[29].string))
-        player.knucklecurverating = int(self._convert_unknown(attributes[30].string))
-        player.knucklecurvepotential = int(self._convert_unknown(attributes[31].string))
-        player.knuckleballrating = int(self._convert_unknown(attributes[32].string))
-        player.knuckleballpotential = int(self._convert_unknown(attributes[33].string))
-        player.numpitches = int(self._convert_unknown(attributes[34].string))
-        player.groundballflyball = attributes[35].string
-        player.velocity = int(self._convert_unknown(attributes[36].string))
-        player.armslot = attributes[35].string
-        player.pitchertype = attributes[36].string
-        player.stamina = int(attributes[37].string)
+        player.movementvleft = int(attributes[7].string)
+        player.controlvleft = int(attributes[8].string)
+        player.stuffvright =  int(attributes[9].string)
+        player.movementvright =  int(attributes[10].string)
+        player.controlvright =  int(attributes[11].string)
+        player.stuffpotential =  int(attributes[12].string)
+        player.movementpotential =  int(attributes[13].string)
+        player.controlpotential =  int(attributes[14].string)
+        player.fastballrating =  int(self._convert_unknown(attributes[15].string))
+        player.fastballpotential =  int(self._convert_unknown(attributes[16].string))
+        player.changeuprating =  int(self._convert_unknown(attributes[17].string))
+        player.changeuppotential =  int(self._convert_unknown(attributes[18].string))
+        player.curveballrating =  int(self._convert_unknown(attributes[19].string))
+        player.curveballpotential =  int(self._convert_unknown(attributes[20].string))
+        player.sliderrating =  int(self._convert_unknown(attributes[21].string))
+        player.sliderpotential = int(self._convert_unknown(attributes[22].string))
+        player.splitterrating = int(self._convert_unknown(attributes[23].string))
+        player.splitterpotential = int(self._convert_unknown(attributes[24].string))
+        player.sinkerrating = int(self._convert_unknown(attributes[25].string))
+        player.sinkerpotential = int(self._convert_unknown(attributes[26].string))
+        player.cutterrating = int(self._convert_unknown(attributes[27].string))
+        player.cutterpotential = int(self._convert_unknown(attributes[28].string))
+        player.forkballrating = int(self._convert_unknown(attributes[29].string))
+        player.forkballpotential = int(self._convert_unknown(attributes[30].string))
+        player.circlechangerating = int(self._convert_unknown(attributes[31].string))
+        player.circlechangepotential = int(self._convert_unknown(attributes[32].string))
+        player.screwballrating = int(self._convert_unknown(attributes[33].string))
+        player.screwballpotential = int(self._convert_unknown(attributes[34].string))
+        player.knucklecurverating = int(self._convert_unknown(attributes[35].string))
+        player.knucklecurvepotential = int(self._convert_unknown(attributes[36].string))
+        player.knuckleballrating = int(self._convert_unknown(attributes[37].string))
+        player.knuckleballpotential = int(self._convert_unknown(attributes[38].string))
+        player.numpitches = int(self._convert_unknown(attributes[39].string))
+        player.groundballflyball = attributes[40].string
+        player.velocity = int(self._convert_unknown(attributes[41].string))
+        player.armslot = attributes[42].string
+        player.pitchertype = attributes[43].string
+        player.stamina = int(attributes[44].string)
 
         return player
+
+    def create_stats_record(self, player_parser, season):
+        attributes = player_parser.find_all('td')
+        player = PlayerStats()
+
+        player.playerid = int(attributes[1].string)
+        player.season = season
+        player.position = attributes[2].string
+        player.name = attributes[3].string
+        player.plateapp = int(attributes[4].string)
+        player.battingwar = float(attributes[5].string)
+        player.ip = float(attributes[6].string)
+        player.battersfaced = int(attributes[7].string)
+        player.pitchingwar = float(attributes[8].string)
+        player.zonerating = float(attributes[9].string)
+        player.defeff = float(attributes[10].string)
+
+        return player
+
     
     @classmethod
     def _convert_unknown(cls, value):
@@ -228,6 +259,11 @@ class OOTPParser():
             return value[1:].replace(',', '')
         elif value == 'Free agent':
             return "0"
+        elif '-' in value:
+            velocities = value.split(" ")[0].split("-")
+            return int((int(velocities[0])+ int(velocities[1]))/2)
+        elif "100+" in value:
+            return 101
         else:
             return value.split(" ")[0]
 

@@ -1,5 +1,7 @@
+apache-superset
 beautifulsoup4
 html5lib
 mysql-connector-python
 lxml
+pymysql
 sqlalchemy
