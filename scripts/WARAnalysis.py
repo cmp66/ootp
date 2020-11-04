@@ -32,7 +32,7 @@ for stat_record in db_access.get_stats_by_season(season):
 
     num_players += 1
 
-    if player_record.position in ["SP", "RP"]:
+    if player_record.position in ["SP", "RP", "CL"]:
         total_pitching_war += pitching_war
         player_war = pitching_war
     else:

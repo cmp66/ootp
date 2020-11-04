@@ -204,17 +204,14 @@ class OOTPDbAccess:
         user = os.environ["DB_USERNAME"]
         password = os.environ["DB_PASSWORD"]
         if type == "mysql":
-            print(f"Creating mysql db connection to {host}")
             self.engine = create_engine(
                 f"mysql+pymysql://{user}:{password}@{host}:3306/ootp", echo=False
             )
             Base.metadata.create_all(self.engine)
         else:
-            print("Creating sqllite connnection")
             self.engine = create_engine("sqlite:///:memory", echo=True)
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
-        print("Session Created")
 
     def get_session(self):
         return self.session
@@ -311,3 +308,30 @@ class OOTPDbAccess:
 
     def get_player_by_id(self, id):
         return self.session.query(Player).filter(Player.id == id).first()
+
+    def get_player_by_date(self, id, import_date):
+        return (
+            self.session.query(Player)
+            .filter(Player.id == id)
+            .filter(Player.timestamp == import_date)
+            .first()
+        )
+
+    def get_batting_record(self, id, timestamp):
+        return (
+            self.session.query(PlayerBatting)
+            .filter(PlayerBatting.playerid == id)
+            .filter(PlayerBatting.timestamp == timestamp)
+            .first()
+        )
+
+    def get_pitching_record(self, id, timestamp):
+        return (
+            self.session.query(PlayerPitching)
+            .filter(PlayerPitching.playerid == id)
+            .filter(PlayerPitching.timestamp == timestamp)
+            .first()
+        )
+
+    def get_all_players_by_date(self, import_date):
+        return self.session.query(Player).filter(Player.timestamp == import_date)
