@@ -333,5 +333,13 @@ class OOTPDbAccess:
             .first()
         )
 
+    def get_fielding_record(self, id, timestamp):
+        return (
+            self.session.query(PlayerFielding)
+            .filter(PlayerFielding.playerid == id)
+            .filter(PlayerFielding.timestamp == timestamp)
+            .first()
+        )
+
     def get_all_players_by_date(self, import_date):
         return self.session.query(Player).filter(Player.timestamp == import_date)
