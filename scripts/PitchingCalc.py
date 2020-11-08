@@ -1,4 +1,4 @@
-from db import OOTPDbAccess, PlayerStats, Player, PlayerFielding, PlayerBatting
+from db import OOTPDbAccess, PlayerStats, Player, PlayerPitching
 from ratings import PlayerRatings
 from scipy.stats import spearmanr
 import datetime
@@ -15,8 +15,9 @@ for i in range(201):
     players[i] = []
 
 
-for target_position in ['C', '1B', '2B', 'SS', '3B', 'LF', 'CF', 'RF']:
-#for target_position in ['C']:
+#for target_position in ['C', '1B', '2B', 'SS', '3B', 'LF', 'CF', 'RF']:
+for target_position in ['SP']:
+
     ratings = []
     war = []
     wartotal = 0
@@ -28,29 +29,28 @@ for target_position in ['C', '1B', '2B', 'SS', '3B', 'LF', 'CF', 'RF']:
 
         if player_record.position != target_position:
             continue
-        elif stat_record.plateapp < 30:
+        elif stat_record.battersfaced < 100:
             continue
 
-        fielding_record = db_access.get_fielding_record(player_id, import_date)
-        batting_record = db_access.get_batting_record(player_id, import_date)
+        pitching_record = db_access.get_pitching_record(player_id, import_date)
 
-        rating = ratings_calc.calculate_overall_batter_rating(fielding_record, batting_record, player_record.position)
-        #brating = ratings_calc.calculate_batting_rating(batting_record)
-        war_rate = stat_record.battingwar/stat_record.plateapp
+        if pitching_record.numpitches < 3:
+            continue
+
+        rating = ratings_calc.calculate_starter_pitcher_rating(pitching_record, player_record.position)
+
+        war_rate = stat_record.pitchingwar/stat_record.battersfaced
         war.append(war_rate)
         ratings.append(rating)
         players[rating].append(player_record.name)
 
-        if stat_record.battingwar > -0.2 and stat_record.battingwar < 0.2:
+        if stat_record.pitchingwar > -0.2 and stat_record.pitchingwar < 0.2:
             wartotal += 1
             ratingstotal += rating
-        
-        #if rating > 0:
-        #    print(f'Player: {player_record.name}  Position: {player_record.position}  Rating: {rating}')
 
-    #corr, _ = pearsonr(war,ratings)
-    #print(f'Position: {target_position} Pearsons correlation: {corr}')
-    corr, _ = spearmanr(war,ratings)
+    corr, _ = spearmanr(war,ratings) 
+    if wartotal == 0:
+        wartotal = 1
     zero_war_rating = int((round(ratingstotal/wartotal)))
     print(f'Position: {target_position} Spearmans correlation: {corr}  Zero WAR Rating {zero_war_rating}')
 
@@ -58,4 +58,3 @@ for key in sorted(players):
     if len(players[key]) == 0:
         continue
     print (f'{key} : {players[key]}')
-    
