@@ -37,7 +37,7 @@ for target_position in ['SP']:
         if pitching_record.numpitches < 3:
             continue
 
-        rating = ratings_calc.calculate_starter_pitcher_rating(pitching_record, player_record.position)
+        rating = ratings_calc.calculate_starter_pitcher_rating(pitching_record, player_record.position, False)
 
         war_rate = stat_record.pitchingwar/stat_record.battersfaced
         war.append(war_rate)

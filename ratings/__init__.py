@@ -254,19 +254,28 @@ class PlayerRatings:
 
         return int(round(rating))
 
-    def calculate_base_pitching_rating(self, pitching_ratings:PlayerPitching, position:str) -> int:
+    def calculate_base_pitching_rating(self, pitching_ratings:PlayerPitching, position:str, potential:bool) -> int:
 
         gb_fb_adjustment = groundball_flyball_adjustment[
             pitching_ratings.groundballflyball
         ]
 
-        return(
-            (gb_fb_adjustment * 15)
-            + (pitching_ratings.stuffrating * 37)
-            + (pitching_ratings.movementrating * 35)
-            + (pitching_ratings.controlrating * 34)
-            + (pitching_ratings.stamina * 10)
-        ) * BASE_PITCHING_ADJUSTMENT
+        if potential:
+            return(
+                (gb_fb_adjustment * 15)
+                + (pitching_ratings.stuffrating * 37)
+                + (pitching_ratings.movementrating * 35)
+                + (pitching_ratings.controlrating * 34)
+                + (pitching_ratings.stamina * 10)
+            ) * BASE_PITCHING_ADJUSTMENT
+        else:
+            return(
+                (gb_fb_adjustment * 15)
+                + (pitching_ratings.stuffpotential * 37)
+                + (pitching_ratings.movementpotential * 35)
+                + (pitching_ratings.controlpotential * 34)
+                + (pitching_ratings.stamina * 10)
+            ) * BASE_PITCHING_ADJUSTMENT
 
 
     def get_pitching_ratings(self, pitching_ratings:PlayerPitching) ->[int]:
@@ -299,9 +308,42 @@ class PlayerRatings:
 
         return pitches
 
-    def calculate_individual_pitch_ratings(self, pitching_ratings, position):
+    def get_pitching_potential_ratings(self, pitching_ratings:PlayerPitching) ->[int]:
+        pitches = []
 
-        pitches = self.get_pitching_ratings(pitching_ratings)
+        if pitching_ratings.fastballpotential > 0:
+            pitches.append(pitching_ratings.fastballpotential)
+        if pitching_ratings.changeuppotential > 0:
+            pitches.append(pitching_ratings.changeuppotential)
+        if pitching_ratings.curveballpotential > 0:
+            pitches.append(pitching_ratings.curveballpotential)
+        if pitching_ratings.sliderpotential > 0:
+            pitches.append(pitching_ratings.sliderpotential)
+        if pitching_ratings.sinkerpotential > 0:
+            pitches.append(pitching_ratings.sinkerpotential)
+        if pitching_ratings.splitterpotential > 0:
+            pitches.append(pitching_ratings.splitterpotential)
+        if pitching_ratings.cutterpotential > 0:
+            pitches.append(pitching_ratings.cutterpotential)
+        if pitching_ratings.forkballpotential > 0:
+            pitches.append(pitching_ratings.forkballpotential)
+        if pitching_ratings.circlechangepotential > 0:
+            pitches.append(pitching_ratings.circlechangepotential)
+        if pitching_ratings.screwballpotential > 0:
+            pitches.append(pitching_ratings.screwballpotential)
+        if pitching_ratings.knucklecurvepotential > 0:
+            pitches.append(pitching_ratings.knucklecurvepotential)
+        if pitching_ratings.knuckleballpotential > 0:
+            pitches.append(pitching_ratings.knuckleballpotential)
+
+        return pitches
+
+    def calculate_individual_pitch_ratings(self, pitching_ratings, position, potential):
+
+        if potential:
+            pitches = self.get_pitching_potential_ratings(pitching_ratings)
+        else:
+            pitches = self.get_pitching_ratings(pitching_ratings)
         pitches.sort()
 
         pitch1rating = pitches[0]
@@ -310,17 +352,17 @@ class PlayerRatings:
         pitch4rating = pitches[3] if len(pitches) > 3 else 0
 
         return (
-            (pitch1rating * 20)
+            ((pitch1rating * 20)
             + (pitch2rating * 20)
             + (pitch3rating * 10)
             + (pitch4rating * 10)
-            + (pitching_ratings.velocity - 90.0) * 20
+            + (pitching_ratings.velocity - 90.0) * 20)
         ) * INDIVIDUAL_PITCHING_ADJUSTMENT
 
-    def calculate_starter_pitcher_rating(self, pitching_ratings, position):
-        baserating = self.calculate_base_pitching_rating(pitching_ratings, position)
+    def calculate_starter_pitcher_rating(self, pitching_ratings, position, potential):
+        baserating = self.calculate_base_pitching_rating(pitching_ratings, position, potential)
         indiv_rating = self.calculate_individual_pitch_ratings(
-            pitching_ratings, position
+            pitching_ratings, position, potential
         )
 
         rating = (
