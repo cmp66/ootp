@@ -38,15 +38,27 @@ RIGHTFIELD_BATTING_ADJUST = 0.75
 ###
 # Offsets to get 0 WAR rating at 100
 ###
-CATCHER_NORMALIZATION = 17  # 2862/3000
-SHORTSTOP_NORMALIZATION = -2  # 2589/3000
-SECONDBASE_NORMALIZATION = 10  # 2987/3000
-THIRDBASE_NORMALIZATION = 8  # 3352/3000
-FIRSTBASE_NORMALIZATION = 2  # 2840/3000
-LEFTFIELD_NORMALIZATION = 7  # 2369/3000
-CENTERFIELD_NORMALIZATION = -10  # 3514/3000
-RIGHTFIELD_NORMALIZATION = 5  # 3266/3000
-DH_NORMALIZATION = 0  # 2793/3000
+### 2055
+# CATCHER_NORMALIZATION = 17
+# SHORTSTOP_NORMALIZATION = -2
+# SECONDBASE_NORMALIZATION = 10
+# THIRDBASE_NORMALIZATION = 8
+# FIRSTBASE_NORMALIZATION = 2
+# LEFTFIELD_NORMALIZATION = 7
+# CENTERFIELD_NORMALIZATION = -10
+# RIGHTFIELD_NORMALIZATION = 5
+# DH_NORMALIZATION = 0
+
+### 2056
+CATCHER_NORMALIZATION = 13
+SHORTSTOP_NORMALIZATION = -4
+SECONDBASE_NORMALIZATION = 6
+THIRDBASE_NORMALIZATION = -3
+FIRSTBASE_NORMALIZATION = 2
+LEFTFIELD_NORMALIZATION = 9
+CENTERFIELD_NORMALIZATION = -6
+RIGHTFIELD_NORMALIZATION = 3
+DH_NORMALIZATION = 0
 
 
 groundball_flyball_adjustment = {
@@ -60,12 +72,24 @@ groundball_flyball_adjustment = {
 ####
 # Pitching adjustments
 ###
-BASE_PITCHING_ADJUSTMENT = 0.1182
-INDIVIDUAL_PITCHING_ADJUSTMENT = 0.2083
+BASE_PITCHING_ADJUSTMENT = 0.1035
+SP_INDIVIDUAL_PITCHING_ADJUSTMENT = 0.2083
+RP_INDIVIDUAL_PITCHING_ADJUSTMENT = 0.2083
 
 SP_BASE_ADJUST = 0.85
 SP_PITCH_ADJUST = 0.15
-SP_NORMALIZATION = 12
+
+
+RP_BASE_ADJUST = 0.90
+RP_PITCH_ADJUST = 0.10
+
+### 2055
+# SP_NORMALIZATION = 21
+# RP_NORMALIZATION = 20
+
+### 2056
+SP_NORMALIZATION = 21
+RP_NORMALIZATION = 17
 
 
 class PlayerRatings:
@@ -172,7 +196,7 @@ class PlayerRatings:
         return int(round(rating))
 
     def calculate_batting_rating(
-        self, batting_ratings: PlayerBatting, position: str
+        self, batting_ratings: PlayerBatting, position: str, potential: bool
     ) -> int:
         if batting_ratings.battedballtype == "Flyball":
             type_adjustment = 3
@@ -181,25 +205,46 @@ class PlayerRatings:
         else:
             type_adjustment = 0
 
-        if position == "C":
-            rating = (
-                (batting_ratings.contactrating * 19)
-                + (batting_ratings.gaprating * 5)
-                + (batting_ratings.powerrating * 19)
-                + (batting_ratings.eyerating * 19)
-                + (batting_ratings.krating * 19)
-                + (batting_ratings.speedrating * 15)
-                + (type_adjustment * 4)
-            ) * CATCHER_BATTING_ADJUSTMENT
+        if potential:
+            if position == "C":
+                rating = (
+                    (batting_ratings.contactpotential * 19)
+                    + (batting_ratings.gappotential * 5)
+                    + (batting_ratings.powerpotential * 19)
+                    + (batting_ratings.eyeprotential * 19)
+                    + (batting_ratings.kprotential * 19)
+                    + (batting_ratings.speedrating * 15)
+                    + (type_adjustment * 4)
+                ) * CATCHER_BATTING_ADJUSTMENT
+            else:
+                rating = (
+                    (batting_ratings.contactpotential * 19)
+                    + (batting_ratings.gappotential * 5)
+                    + (batting_ratings.powerpotential * 19)
+                    + (batting_ratings.eyeprotential * 19)
+                    + (batting_ratings.kprotential * 19)
+                    + (type_adjustment * 4)
+                ) * BATTING_ADJUSTMENT
         else:
-            rating = (
-                (batting_ratings.contactrating * 19)
-                + (batting_ratings.gaprating * 5)
-                + (batting_ratings.powerrating * 19)
-                + (batting_ratings.eyerating * 19)
-                + (batting_ratings.krating * 19)
-                + (type_adjustment * 4)
-            ) * BATTING_ADJUSTMENT
+            if position == "C":
+                rating = (
+                    (batting_ratings.contactrating * 19)
+                    + (batting_ratings.gaprating * 5)
+                    + (batting_ratings.powerrating * 19)
+                    + (batting_ratings.eyerating * 19)
+                    + (batting_ratings.krating * 19)
+                    + (batting_ratings.speedrating * 15)
+                    + (type_adjustment * 4)
+                ) * CATCHER_BATTING_ADJUSTMENT
+            else:
+                rating = (
+                    (batting_ratings.contactrating * 19)
+                    + (batting_ratings.gaprating * 5)
+                    + (batting_ratings.powerrating * 19)
+                    + (batting_ratings.eyerating * 19)
+                    + (batting_ratings.krating * 19)
+                    + (type_adjustment * 4)
+                ) * BATTING_ADJUSTMENT
 
         return int(round(rating))
 
@@ -208,8 +253,9 @@ class PlayerRatings:
         fielding_ratings: PlayerFielding,
         batting_ratings: PlayerBatting,
         position: str,
+        potential: bool,
     ) -> int:
-        brating = self.calculate_batting_rating(batting_ratings, position)
+        brating = self.calculate_batting_rating(batting_ratings, position, potential)
         frating = self.calculate_defense_rating(fielding_ratings, position)
         if position == "1B":
             rating = (
@@ -246,22 +292,24 @@ class PlayerRatings:
             ) + CATCHER_NORMALIZATION
         elif position == "DH":
             rating = brating + DH_NORMALIZATION
-        elif position in ['CL', 'SP', 'RP']:
+        elif position in ["CL", "SP", "RP"]:
             rating = 0.0
         else:
             print(f"Invalid position {position}")
             rating = 0.0
 
-        return int(round(rating))
+        return int(round(rating)), int(round(brating)), int(round(frating))
 
-    def calculate_base_pitching_rating(self, pitching_ratings:PlayerPitching, position:str, potential:bool) -> int:
+    def calculate_base_starting_pitching_rating(
+        self, pitching_ratings: PlayerPitching, position: str, potential: bool
+    ) -> int:
 
         gb_fb_adjustment = groundball_flyball_adjustment[
             pitching_ratings.groundballflyball
         ]
 
-        if potential:
-            return(
+        if potential is False:
+            return (
                 (gb_fb_adjustment * 15)
                 + (pitching_ratings.stuffrating * 37)
                 + (pitching_ratings.movementrating * 35)
@@ -269,7 +317,7 @@ class PlayerRatings:
                 + (pitching_ratings.stamina * 10)
             ) * BASE_PITCHING_ADJUSTMENT
         else:
-            return(
+            return (
                 (gb_fb_adjustment * 15)
                 + (pitching_ratings.stuffpotential * 37)
                 + (pitching_ratings.movementpotential * 35)
@@ -277,8 +325,32 @@ class PlayerRatings:
                 + (pitching_ratings.stamina * 10)
             ) * BASE_PITCHING_ADJUSTMENT
 
+    def calculate_base_relief_pitching_rating(
+        self, pitching_ratings: PlayerPitching, position: str, potential: bool
+    ) -> int:
 
-    def get_pitching_ratings(self, pitching_ratings:PlayerPitching) ->[int]:
+        gb_fb_adjustment = groundball_flyball_adjustment[
+            pitching_ratings.groundballflyball
+        ]
+
+        if potential is False:
+            return (
+                (gb_fb_adjustment * 15)
+                + (pitching_ratings.stuffrating * 35)
+                + (pitching_ratings.movementrating * 52)
+                + (pitching_ratings.controlrating * 25)
+                + (pitching_ratings.stamina * 4)
+            ) * BASE_PITCHING_ADJUSTMENT
+        else:
+            return (
+                (gb_fb_adjustment * 15)
+                + (pitching_ratings.stuffpotential * 35)
+                + (pitching_ratings.movementpotential * 52)
+                + (pitching_ratings.controlpotential * 25)
+                + (pitching_ratings.stamina * 4)
+            ) * BASE_PITCHING_ADJUSTMENT
+
+    def get_pitching_ratings(self, pitching_ratings: PlayerPitching) -> [int]:
         pitches = []
 
         if pitching_ratings.fastballrating > 0:
@@ -308,7 +380,7 @@ class PlayerRatings:
 
         return pitches
 
-    def get_pitching_potential_ratings(self, pitching_ratings:PlayerPitching) ->[int]:
+    def get_pitching_potential_ratings(self, pitching_ratings: PlayerPitching) -> [int]:
         pitches = []
 
         if pitching_ratings.fastballpotential > 0:
@@ -351,16 +423,32 @@ class PlayerRatings:
         pitch3rating = pitches[2] if len(pitches) > 2 else 0
         pitch4rating = pitches[3] if len(pitches) > 3 else 0
 
-        return (
-            ((pitch1rating * 20)
-            + (pitch2rating * 20)
-            + (pitch3rating * 10)
-            + (pitch4rating * 10)
-            + (pitching_ratings.velocity - 90.0) * 20)
-        ) * INDIVIDUAL_PITCHING_ADJUSTMENT
+        if position == "SP":
+            return (
+                (
+                    (pitch1rating * 20)
+                    + (pitch2rating * 20)
+                    + (pitch3rating * 10)
+                    + (pitch4rating * 10)
+                    + (pitching_ratings.velocity - 90.0) * 20
+                )
+            ) * SP_INDIVIDUAL_PITCHING_ADJUSTMENT
+        else:
+            return (
+                (
+                    (pitch1rating * 30)
+                    + (pitch2rating * 30)
+                    + (pitching_ratings.velocity - 90.0) * 20
+                )
+            ) * RP_INDIVIDUAL_PITCHING_ADJUSTMENT
 
     def calculate_starter_pitcher_rating(self, pitching_ratings, position, potential):
-        baserating = self.calculate_base_pitching_rating(pitching_ratings, position, potential)
+        if pitching_ratings.numpitches < 3:
+            return 0, 0, 0
+        
+        baserating = self.calculate_base_starting_pitching_rating(
+            pitching_ratings, position, potential
+        )
         indiv_rating = self.calculate_individual_pitch_ratings(
             pitching_ratings, position, potential
         )
@@ -371,4 +459,20 @@ class PlayerRatings:
             + SP_NORMALIZATION
         )
 
-        return int(round(rating))
+        return int(round(rating)), int(round(baserating)), int(round(indiv_rating))
+
+    def calculate_relief_pitcher_rating(self, pitching_ratings, position, potential):
+        baserating = self.calculate_base_relief_pitching_rating(
+            pitching_ratings, position, potential
+        )
+        indiv_rating = self.calculate_individual_pitch_ratings(
+            pitching_ratings, position, potential
+        )
+
+        rating = (
+            (baserating * RP_BASE_ADJUST)
+            + (indiv_rating * RP_PITCH_ADJUST)
+            + RP_NORMALIZATION
+        )
+
+        return int(round(rating)), int(round(baserating)), int(round(indiv_rating))
