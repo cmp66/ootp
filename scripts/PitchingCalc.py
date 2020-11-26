@@ -16,7 +16,7 @@ for i in range(201):
 
 
 # for target_position in ['C', '1B', '2B', 'SS', '3B', 'LF', 'CF', 'RF']:
-for target_position in ["RP", "CL"]:
+for target_position in ["SP", "RP", "CL"]:
 
     ratings = []
     war = []
@@ -39,11 +39,11 @@ for target_position in ["RP", "CL"]:
 
         if target_position == "SP":
             rating, base, indiv = ratings_calc.calculate_starter_pitcher_rating(
-                pitching_record, player_record.position, True
+                pitching_record, player_record.position, False
             )
         else:
             rating, base, indiv = ratings_calc.calculate_relief_pitcher_rating(
-                pitching_record, player_record.position, True
+                pitching_record, player_record.position, False
             )
 
         war_rate = stat_record.pitchingwar / stat_record.battersfaced
@@ -51,7 +51,7 @@ for target_position in ["RP", "CL"]:
         ratings.append(rating)
         players[rating].append(player_record.name)
 
-        if stat_record.pitchingwar > -0.2 and stat_record.pitchingwar < 0.2:
+        if stat_record.pitchingwar > -0.5 and stat_record.pitchingwar < 0.5:
             wartotal += 1
             ratingstotal += rating
 
@@ -63,7 +63,7 @@ for target_position in ["RP", "CL"]:
         f"Position: {target_position} Spearmans correlation: {corr}  Zero WAR Rating {zero_war_rating}"
     )
 
-for key in sorted(players):
-    if len(players[key]) == 0:
-        continue
-    print(f"{key} : {players[key]}")
+# for key in sorted(players):
+#     if len(players[key]) == 0:
+#         continue
+#     print(f"{key} : {players[key]}")

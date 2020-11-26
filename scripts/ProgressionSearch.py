@@ -96,6 +96,7 @@ def _get_batter_diff_potential(id, report_time, reference_time):
 
     return total_change
 
+
 def _init_player_report(playerid, timestamp):
     player_report = PlayerReports()
     player_report.playerid = playerid
@@ -131,9 +132,7 @@ def _init_player_report(playerid, timestamp):
     return player_report
 
 
-
-
-import_date = datetime.datetime.strptime("10/30/2056", "%m/%d/%Y")
+import_date = datetime.datetime.strptime("01/01/2057", "%m/%d/%Y")
 reference_date = datetime.datetime.strptime("04/01/2056", "%m/%d/%Y")
 players = _get_all_players(import_date)
 
@@ -143,15 +142,16 @@ changed_pitchers = {}
 minval = 99
 
 print(
-    "ID,NAME,POS,TEAM,ORG,LEAGUE,LEVEL,AGE,CURRENT,POTENTIAL," +
-    "PITCH DIFF CURRENT,PITCH DIFF POT,BAT DIFF CURRENT,BAT DIF POT," +  
-    "START OVR CUR,START OVR POT,RELIEF OVR CUR,RELIEF OVR POT,BAT OVR CUR,BAT OVR POT," +
-    "START BASE CUR,START INDIV CUR,START BASE POT, START INDIV POT," + 
-    "RELIEF BASE CUR,RELIEF INDIV CUR,RELIEF BASE POT,RELIEF INDIV POT," + 
-    "BAT HIT CUR,BAT FIELD CUR,BAT HIT POT,BAT FIELD POT"
+    "ID,NAME,POS,TEAM,ORG,LEAGUE,LEVEL,AGE,CURRENT,POTENTIAL,"
+    + "PITCH DIFF CURRENT,PITCH DIFF POT,BAT DIFF CURRENT,BAT DIF POT,"
+    + "START OVR CUR,START OVR POT,RELIEF OVR CUR,RELIEF OVR POT,BAT OVR CUR,BAT OVR POT,"
+    + "START BASE CUR,START INDIV CUR,START BASE POT, START INDIV POT,"
+    + "RELIEF BASE CUR,RELIEF INDIV CUR,RELIEF BASE POT,RELIEF INDIV POT,"
+    + "BAT HIT CUR,BAT FIELD CUR,BAT HIT POT,BAT FIELD POT"
 )
 
 for player in players:
+    print (f'evaluating {player.name}  {player.id}')
     player_report = _init_player_report(player.id, import_date)
     player_report.position = player.position
     player_report.team = player.team
@@ -170,28 +170,28 @@ for player in players:
         (
             player_report.starteroverallpotential,
             player_report.starterbasepotential,
-            player_report.starterindivpotential
+            player_report.starterindivpotential,
         ) = ratings_calc.calculate_starter_pitcher_rating(
             pitcher_ratings, player.position, True
         )
         (
             player_report.starteroverallcurrent,
             player_report.starterbasecurrent,
-            player_report.starterindivcurrent
+            player_report.starterindivcurrent,
         ) = ratings_calc.calculate_starter_pitcher_rating(
             pitcher_ratings, player.position, False
         )
         (
             player_report.reliefoverallpotential,
             player_report.reliefbasepotential,
-            player_report.reliefindivpotential
+            player_report.reliefindivpotential,
         ) = ratings_calc.calculate_relief_pitcher_rating(
             pitcher_ratings, player.position, True
         )
         (
             player_report.reliefoverallcurrent,
             player_report.reliefbasecurrent,
-            player_report.reliefindivcurrent
+            player_report.reliefindivcurrent,
         ) = ratings_calc.calculate_relief_pitcher_rating(
             pitcher_ratings, player.position, False
         )
@@ -219,26 +219,24 @@ for player in players:
             fielding_ratings, batter_ratings, player.position, False
         )
 
-
     db_access.add_player_report_record(player_report)
 
-   
-    print(
-        f"{player.id},{player.name},{player.position},{player.team}," +
-        f"{player.org},{player.league},{player.level},{player.age}," + 
-        f"{player.overall},{player.potential}," +
-        f"{player_report.pitcherratingsdiffcurrent},{player_report.pitcherratingsdiffpotential}," +
-        f"{player_report.batterratingsdiffcurrent},{player_report.batterratingsdiffpotential}," + 
-        f"{player_report.starteroverallcurrent},{player_report.starteroverallpotential}," +   
-        f"{player_report.reliefoverallcurrent},{player_report.reliefoverallpotential}," +    
-        f"{player_report.batteroverallcurrent},{player_report.batteroverallpotential}," +
-        f"{player_report.starterbasecurrent},{player_report.starterindivcurrent}," +
-        f"{player_report.starterbasepotential},{player_report.starterindivpotential}," +
-        f"{player_report.reliefbasecurrent},{player_report.reliefindivcurrent}," +
-        f"{player_report.reliefbasepotential},{player_report.reliefindivpotential}," +
-        f"{player_report.batteroverallbattingcurrent},{player_report.batteroverallfieldingcurrent}," +
-        f"{player_report.batteroverallbattingpotential},{player_report.batteroverallfieldingpotential}"
-    )
+    # print(
+    #     f"{player.id},{player.name},{player.position},{player.team},"
+    #     + f"{player.org},{player.league},{player.level},{player.age},"
+    #     + f"{player.overall},{player.potential},"
+    #     + f"{player_report.pitcherratingsdiffcurrent},{player_report.pitcherratingsdiffpotential},"
+    #     + f"{player_report.batterratingsdiffcurrent},{player_report.batterratingsdiffpotential},"
+    #     + f"{player_report.starteroverallcurrent},{player_report.starteroverallpotential},"
+    #     + f"{player_report.reliefoverallcurrent},{player_report.reliefoverallpotential},"
+    #     + f"{player_report.batteroverallcurrent},{player_report.batteroverallpotential},"
+    #     + f"{player_report.starterbasecurrent},{player_report.starterindivcurrent},"
+    #     + f"{player_report.starterbasepotential},{player_report.starterindivpotential},"
+    #     + f"{player_report.reliefbasecurrent},{player_report.reliefindivcurrent},"
+    #     + f"{player_report.reliefbasepotential},{player_report.reliefindivpotential},"
+    #     + f"{player_report.batteroverallbattingcurrent},{player_report.batteroverallfieldingcurrent},"
+    #     + f"{player_report.batteroverallbattingpotential},{player_report.batteroverallfieldingpotential}"
+    # )
 
 
 # changed_batters_sorted = list(changed_batters.keys())

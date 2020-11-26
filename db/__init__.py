@@ -391,5 +391,21 @@ class OOTPDbAccess:
             .first()
         )
 
+    def get_player_report(self, id, timestamp):
+         return (
+            self.session.query(PlayerReports)
+            .filter(PlayerReports.playerid == id)
+            .filter(PlayerReports.timestamp == timestamp)
+            .first()
+        )
+
+    def get_player_stats(self, id, season):
+         return (
+            self.session.query(PlayerStats)
+            .filter(PlayerStats.playerid == id)
+            .filter(PlayerStats.season == season)
+            .first()
+        )
+
     def get_all_players_by_date(self, import_date):
         return self.session.query(Player).filter(Player.timestamp == import_date)

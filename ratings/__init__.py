@@ -20,20 +20,20 @@ CATCHER_BATTING_ADJUSTMENT = 0.1754
 ###
 CATCHER_FIELD_ADJUST = 0.25
 CATCHER_BATTING_ADJUST = 0.75
-FIRSTBASE_FIELD_ADJUST = 0.05
-FIRSTBASE_BATTING_ADJUST = 0.95
-SECONDBASE_FIELD_ADJUST = 0.15
-SECONDBASE_BATTING_ADJUST = 0.85
-SHORTSTOP_FIELD_ADJUST = 0.40
-SHORTSTOP_BATTING_ADJUST = 0.60
+FIRSTBASE_FIELD_ADJUST = 0.10
+FIRSTBASE_BATTING_ADJUST = 0.90
+SECONDBASE_FIELD_ADJUST = 0.20
+SECONDBASE_BATTING_ADJUST = 0.80
+SHORTSTOP_FIELD_ADJUST = 0.30
+SHORTSTOP_BATTING_ADJUST = 0.70
 THIRDBASE_FIELD_ADJUST = 0.15
 THIRDBASE_BATTING_ADJUST = 0.85
-LEFTFIELD_FIELD_ADJUST = 0.05
-LEFTFIELD_BATTING_ADJUST = 0.95
-CENTERFIELD_FIELD_ADJUST = 0.50
-CENTERFIELD_BATTING_ADJUST = 0.50
-RIGHTFIELD_FIELD_ADJUST = 0.25
-RIGHTFIELD_BATTING_ADJUST = 0.75
+LEFTFIELD_FIELD_ADJUST = 0.15
+LEFTFIELD_BATTING_ADJUST = 0.85
+CENTERFIELD_FIELD_ADJUST = 0.30
+CENTERFIELD_BATTING_ADJUST = 0.70
+RIGHTFIELD_FIELD_ADJUST = 0.15
+RIGHTFIELD_BATTING_ADJUST = 0.85
 
 ###
 # Offsets to get 0 WAR rating at 100
@@ -51,13 +51,13 @@ RIGHTFIELD_BATTING_ADJUST = 0.75
 
 ### 2056
 CATCHER_NORMALIZATION = 13
-SHORTSTOP_NORMALIZATION = -4
-SECONDBASE_NORMALIZATION = 6
-THIRDBASE_NORMALIZATION = -3
-FIRSTBASE_NORMALIZATION = 2
-LEFTFIELD_NORMALIZATION = 9
-CENTERFIELD_NORMALIZATION = -6
-RIGHTFIELD_NORMALIZATION = 3
+SHORTSTOP_NORMALIZATION = 3
+SECONDBASE_NORMALIZATION = 9
+THIRDBASE_NORMALIZATION = 3
+FIRSTBASE_NORMALIZATION = 8
+LEFTFIELD_NORMALIZATION = 8
+CENTERFIELD_NORMALIZATION = 1
+RIGHTFIELD_NORMALIZATION = 4
 DH_NORMALIZATION = 0
 
 
@@ -65,8 +65,8 @@ groundball_flyball_adjustment = {
     "EX FB": -4,
     "FB": -2,
     "NEU": 0,
-    "GB": 0,
-    "EX GB": 0,
+    "GB": 2,
+    "EX GB": 4,
 }
 
 ####
@@ -76,8 +76,8 @@ BASE_PITCHING_ADJUSTMENT = 0.1035
 SP_INDIVIDUAL_PITCHING_ADJUSTMENT = 0.2083
 RP_INDIVIDUAL_PITCHING_ADJUSTMENT = 0.2083
 
-SP_BASE_ADJUST = 0.85
-SP_PITCH_ADJUST = 0.15
+SP_BASE_ADJUST = 0.90
+SP_PITCH_ADJUST = 0.10
 
 
 RP_BASE_ADJUST = 0.90
@@ -89,7 +89,7 @@ RP_PITCH_ADJUST = 0.10
 
 ### 2056
 SP_NORMALIZATION = 21
-RP_NORMALIZATION = 17
+RP_NORMALIZATION = 14
 
 
 class PlayerRatings:
@@ -146,9 +146,9 @@ class PlayerRatings:
 
     def calc_rightfield_defense_rating(self, fielding_ratings: PlayerFielding) -> int:
         return (
-            (fielding_ratings.outfieldrange * 36.5)
-            + (fielding_ratings.outfieldarm * 4)
-            + (fielding_ratings.outfielderror * 1)
+            (fielding_ratings.outfieldrange * 25.5)
+            + (fielding_ratings.outfieldarm * 14)
+            + (fielding_ratings.outfielderror * 2)
         ) * RIGHTFIELD_ADJUSTMENT
 
     def calc_dh_defense_rating(self, fielding_ratings: PlayerFielding) -> int:
@@ -208,21 +208,21 @@ class PlayerRatings:
         if potential:
             if position == "C":
                 rating = (
-                    (batting_ratings.contactpotential * 19)
-                    + (batting_ratings.gappotential * 5)
-                    + (batting_ratings.powerpotential * 19)
-                    + (batting_ratings.eyeprotential * 19)
-                    + (batting_ratings.kprotential * 19)
+                    (batting_ratings.contactpotential * 18)
+                    + (batting_ratings.gappotential * 9)
+                    + (batting_ratings.powerpotential * 18)
+                    + (batting_ratings.eyeprotential * 18)
+                    + (batting_ratings.kprotential * 18)
                     + (batting_ratings.speedrating * 15)
                     + (type_adjustment * 4)
                 ) * CATCHER_BATTING_ADJUSTMENT
             else:
                 rating = (
-                    (batting_ratings.contactpotential * 19)
-                    + (batting_ratings.gappotential * 5)
-                    + (batting_ratings.powerpotential * 19)
-                    + (batting_ratings.eyeprotential * 19)
-                    + (batting_ratings.kprotential * 19)
+                    (batting_ratings.contactpotential * 18)
+                    + (batting_ratings.gappotential * 9)
+                    + (batting_ratings.powerpotential * 18)
+                    + (batting_ratings.eyeprotential * 18)
+                    + (batting_ratings.kprotential * 18)
                     + (type_adjustment * 4)
                 ) * BATTING_ADJUSTMENT
         else:
@@ -310,19 +310,21 @@ class PlayerRatings:
 
         if potential is False:
             return (
-                (gb_fb_adjustment * 15)
-                + (pitching_ratings.stuffrating * 37)
-                + (pitching_ratings.movementrating * 35)
-                + (pitching_ratings.controlrating * 34)
+                (gb_fb_adjustment * 10)
+                + (pitching_ratings.stuffrating * 34)
+                + (pitching_ratings.movementrating * 31)
+                + (pitching_ratings.controlrating * 31)
                 + (pitching_ratings.stamina * 10)
+                + (pitching_ratings.numpitches * 20)
             ) * BASE_PITCHING_ADJUSTMENT
         else:
             return (
-                (gb_fb_adjustment * 15)
-                + (pitching_ratings.stuffpotential * 37)
-                + (pitching_ratings.movementpotential * 35)
-                + (pitching_ratings.controlpotential * 34)
+                (gb_fb_adjustment * 10)
+                + (pitching_ratings.stuffpotential * 34)
+                + (pitching_ratings.movementpotential * 31)
+                + (pitching_ratings.controlpotential * 31)
                 + (pitching_ratings.stamina * 10)
+                + (pitching_ratings.numpitches * 20)
             ) * BASE_PITCHING_ADJUSTMENT
 
     def calculate_base_relief_pitching_rating(
@@ -336,18 +338,18 @@ class PlayerRatings:
         if potential is False:
             return (
                 (gb_fb_adjustment * 15)
-                + (pitching_ratings.stuffrating * 35)
-                + (pitching_ratings.movementrating * 52)
-                + (pitching_ratings.controlrating * 25)
-                + (pitching_ratings.stamina * 4)
+                + (pitching_ratings.stuffrating * 45)
+                + (pitching_ratings.movementrating * 45)
+                + (pitching_ratings.controlrating * 26)
+                + (pitching_ratings.stamina * 0)
             ) * BASE_PITCHING_ADJUSTMENT
         else:
             return (
                 (gb_fb_adjustment * 15)
-                + (pitching_ratings.stuffpotential * 35)
-                + (pitching_ratings.movementpotential * 52)
-                + (pitching_ratings.controlpotential * 25)
-                + (pitching_ratings.stamina * 4)
+                + (pitching_ratings.stuffpotential * 45)
+                + (pitching_ratings.movementpotential * 45)
+                + (pitching_ratings.controlpotential * 26)
+                + (pitching_ratings.stamina * 0)
             ) * BASE_PITCHING_ADJUSTMENT
 
     def get_pitching_ratings(self, pitching_ratings: PlayerPitching) -> [int]:
@@ -445,7 +447,7 @@ class PlayerRatings:
     def calculate_starter_pitcher_rating(self, pitching_ratings, position, potential):
         if pitching_ratings.numpitches < 3:
             return 0, 0, 0
-        
+
         baserating = self.calculate_base_starting_pitching_rating(
             pitching_ratings, position, potential
         )

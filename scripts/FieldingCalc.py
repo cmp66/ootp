@@ -16,7 +16,7 @@ for i in range(201):
 
 
 for target_position in ["C", "1B", "2B", "SS", "3B", "LF", "CF", "RF"]:
-    # for target_position in ['C']:
+#for target_position in ['CF']:
     ratings = []
     war = []
     wartotal = 0
@@ -34,8 +34,8 @@ for target_position in ["C", "1B", "2B", "SS", "3B", "LF", "CF", "RF"]:
         fielding_record = db_access.get_fielding_record(player_id, import_date)
         batting_record = db_access.get_batting_record(player_id, import_date)
 
-        rating = ratings_calc.calculate_overall_batter_rating(
-            fielding_record, batting_record, player_record.position, True
+        rating, brating, frating = ratings_calc.calculate_overall_batter_rating(
+            fielding_record, batting_record, player_record.position, False
         )
         # brating = ratings_calc.calculate_batting_rating(batting_record)
         war_rate = stat_record.battingwar / stat_record.plateapp
@@ -43,7 +43,7 @@ for target_position in ["C", "1B", "2B", "SS", "3B", "LF", "CF", "RF"]:
         ratings.append(rating)
         players[rating].append(player_record.name)
 
-        if stat_record.battingwar > -0.2 and stat_record.battingwar < 0.2:
+        if stat_record.battingwar > -0.5 and stat_record.battingwar < 0.5:
             wartotal += 1
             ratingstotal += rating
 
@@ -55,10 +55,10 @@ for target_position in ["C", "1B", "2B", "SS", "3B", "LF", "CF", "RF"]:
     corr, _ = spearmanr(war, ratings)
     zero_war_rating = int((round(ratingstotal / wartotal)))
     print(
-        f"Position: {target_position} Spearmans correlation: {corr}  Zero WAR Rating {zero_war_rating}"
+        f"Position: {target_position} Spearmans correlation: {corr}  Two WAR Rating {zero_war_rating}"
     )
 
-for key in sorted(players):
-    if len(players[key]) == 0:
-        continue
-    print(f"{key} : {players[key]}")
+# for key in sorted(players):
+#     if len(players[key]) == 0:
+#         continue
+#     print(f"{key} : {players[key]}")

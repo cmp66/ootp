@@ -60,6 +60,17 @@ class OOTPParser:
 
         return parsed_players
 
+    def parse_exports_file(self, exportsfile):
+        parser = BeautifulSoup(exportsfile, "lxml")
+        parsed_players = []
+
+        player_table = parser.body.table.table
+        players = player_table.find_all("tr")[1:]
+        for player in players:
+            parsed_players.append(self.create_export_record(player))
+
+        return parsed_players
+
     def create_player_record(self, player_parser, import_date):
         attributes = player_parser.find_all("td")
         player = Player()
@@ -251,6 +262,16 @@ class OOTPParser:
         player.pitchingwar = float(attributes[8].string)
         player.zonerating = float(attributes[9].string)
         player.defeff = float(attributes[10].string)
+
+        return player
+
+    def create_export_record(self, player_parser):
+        attributes = player_parser.find_all("td")
+        player = {}
+
+        player["id"] = int(attributes[0].string)
+        player["position"] = attributes[1].string
+        player["name"] = attributes[2].string
 
         return player
 
