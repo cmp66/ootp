@@ -24,6 +24,8 @@ class Player(Base):
     height = Column(Integer)
     weight = Column(Integer)
     bats = Column(String(32))
+    overall = Column(Integer)
+    potential = Column(Integer)
     throws = Column(String(32))
     leader = Column(String(32))
     loyalty = Column(String(32))
@@ -197,6 +199,39 @@ class PlayerStats(Base):
     defeff = Column(Float)
 
 
+class PlayerReports(Base):
+    __tablename__ = "playerreport"
+
+    playerid = Column(Integer, ForeignKey("players.id"), primary_key=True)
+    timestamp = Column(Date, primary_key=True)
+    position = Column(String(32))
+    team = Column(String(32))
+    current = Column(Float, default=0.0)
+    potential = Column(Float, default=0.0)
+    pitcherratingsdiffcurrent = Column(Integer, default=0)
+    pitcherratingsdiffpotential = Column(Integer, default=0)
+    batterratingsdiffcurrent = Column(Integer, default=0)
+    batterratingsdiffpotential = Column(Integer, default=0)
+    starteroverallpotential = Column(Integer, default=0)
+    starterbasepotential = Column(Integer, default=0)
+    starterindivpotential = Column(Integer, default=0)
+    starteroverallcurrent = Column(Integer, default=0)
+    starterbasecurrent = Column(Integer, default=0)
+    starterindivcurrent = Column(Integer, default=0)
+    reliefoverallpotential = Column(Integer)
+    reliefbasepotential = Column(Integer)
+    reliefindivpotential = Column(Integer)
+    reliefoverallcurrent = Column(Integer, default=0)
+    reliefbasecurrent = Column(Integer, default=0)
+    reliefindivcurrent = Column(Integer, default=0)
+    batteroverallpotential = Column(Integer, default=0)
+    batteroverallbattingpotential = Column(Integer, default=0)
+    batteroverallfieldingpotential = Column(Integer, default=0)
+    batteroverallcurrent = Column(Integer, default=0)
+    batteroverallbattingcurrent = Column(Integer, default=0)
+    batteroverallfieldingcurrent = Column(Integer, default=0)
+
+
 class OOTPDbAccess:
     def __init__(self):
         type = os.environ["DB_TYPE"]
@@ -271,25 +306,40 @@ class OOTPDbAccess:
             self.session.commit()
 
     def add_player_stats_record(self, player_stats_record):
-        try:
-            existing_user = (
-                self.session.query(Player)
-                .filter_by(id=player_stats_record.playerid)
-                .first()
-            )
-            if existing_user is None:
-                return
-            existing_record = (
-                self.session.query(PlayerStats)
-                .filter_by(playerid=player_stats_record.playerid)
-                .filter_by(season=player_stats_record.season)
-                .first()
-            )
-        except InvalidRequestError:
+        existing_user = (
+            self.session.query(Player)
+            .filter_by(id=player_stats_record.playerid)
+            .first()
+        )
+        if existing_user is None:
             return
+        existing_record = (
+            self.session.query(PlayerStats)
+            .filter_by(playerid=player_stats_record.playerid)
+            .filter_by(season=player_stats_record.season)
+            .first()
+        )
         if existing_record is None:
             print(f"adding stats record for player {player_stats_record.name}")
             self.session.add(player_stats_record)
+            try:
+                self.session.commit()
+            except IntegrityError:
+                print("Integrity Error")
+                return
+            except InvalidRequestError:
+                print("InvalidRequestError Error")
+                return
+
+    def add_player_report_record(self, player_report_record):
+        existing_report = (
+            self.session.query(PlayerReports)
+            .filter_by(playerid=player_report_record.playerid)
+            .filter_by(timestamp=player_report_record.timestamp)
+            .first()
+        )
+        if existing_report is None:
+            self.session.add(player_report_record)
             try:
                 self.session.commit()
             except IntegrityError:
@@ -338,6 +388,22 @@ class OOTPDbAccess:
             self.session.query(PlayerFielding)
             .filter(PlayerFielding.playerid == id)
             .filter(PlayerFielding.timestamp == timestamp)
+            .first()
+        )
+
+    def get_player_report(self, id, timestamp):
+         return (
+            self.session.query(PlayerReports)
+            .filter(PlayerReports.playerid == id)
+            .filter(PlayerReports.timestamp == timestamp)
+            .first()
+        )
+
+    def get_player_stats(self, id, season):
+         return (
+            self.session.query(PlayerStats)
+            .filter(PlayerStats.playerid == id)
+            .filter(PlayerStats.season == season)
             .first()
         )
 
