@@ -50,14 +50,14 @@ RIGHTFIELD_BATTING_ADJUST = 0.85
 # DH_NORMALIZATION = 0
 
 ### 2056
-CATCHER_NORMALIZATION = 13
-SHORTSTOP_NORMALIZATION = 3
-SECONDBASE_NORMALIZATION = 9
-THIRDBASE_NORMALIZATION = 3
-FIRSTBASE_NORMALIZATION = 8
-LEFTFIELD_NORMALIZATION = 8
-CENTERFIELD_NORMALIZATION = 1
-RIGHTFIELD_NORMALIZATION = 4
+CATCHER_NORMALIZATION = 18
+SHORTSTOP_NORMALIZATION = 7
+SECONDBASE_NORMALIZATION = 12
+THIRDBASE_NORMALIZATION = 6
+FIRSTBASE_NORMALIZATION = 12
+LEFTFIELD_NORMALIZATION = 10
+CENTERFIELD_NORMALIZATION = 3
+RIGHTFIELD_NORMALIZATION = 6
 DH_NORMALIZATION = 0
 
 
@@ -88,8 +88,8 @@ RP_PITCH_ADJUST = 0.10
 # RP_NORMALIZATION = 20
 
 ### 2056
-SP_NORMALIZATION = 21
-RP_NORMALIZATION = 14
+SP_NORMALIZATION = 23
+RP_NORMALIZATION = 6
 
 
 class PlayerRatings:
@@ -206,43 +206,88 @@ class PlayerRatings:
             type_adjustment = 0
 
         if potential:
+            if batting_ratings.contactpotential < 6:
+                contactrating = batting_ratings.contactpotential + (batting_ratings.contactpotential-6) 
+            else:
+                contactrating = batting_ratings.contactpotential
+            if batting_ratings.powerpotential < 0:
+                powerrating = batting_ratings.powerpotential + (batting_ratings.powerpotential-6) 
+            else:
+                powerrating = batting_ratings.powerpotential
+            if batting_ratings.eyepotential < 0:
+                eyerating = batting_ratings.eyepotential + (batting_ratings.eyepotential-6)
+            else:
+                eyerating = batting_ratings.eyepotential
+            if batting_ratings.kpotential < 6:
+                krating = batting_ratings.kpotential + (batting_ratings.kpotential-6)
+            else:
+                krating = batting_ratings.kpotential
+            if batting_ratings.gappotential < 0:
+                gaprating = batting_ratings.gappotential + (batting_ratings.gappotential-6)
+            else:
+                gaprating = batting_ratings.gappotential
             if position == "C":
+                contactrating = batting_ratings.contactpotential + (batting_ratings.contactpotential-6)
+                powerrating = batting_ratings.pwerpotential + (batting_ratings.powerpotential-6) 
+                eyerating = batting_ratings.eyepotential + (batting_ratings.eyepotential-6)
+                krating = batting_ratings.kpotential + (batting_ratings.kpotential-6)
+                gaprating = batting_ratings.gappotential + (batting_ratings.gappotential-6) 
                 rating = (
-                    (batting_ratings.contactpotential * 18)
-                    + (batting_ratings.gappotential * 9)
-                    + (batting_ratings.powerpotential * 18)
-                    + (batting_ratings.eyeprotential * 18)
-                    + (batting_ratings.kprotential * 18)
+                    (contactrating * 18)
+                    + (gaprating * 9)
+                    + (powerrating * 18)
+                    + (eyerating * 18)
+                    + (krating * 18)
                     + (batting_ratings.speedrating * 15)
                     + (type_adjustment * 4)
                 ) * CATCHER_BATTING_ADJUSTMENT
             else:
                 rating = (
-                    (batting_ratings.contactpotential * 18)
-                    + (batting_ratings.gappotential * 9)
-                    + (batting_ratings.powerpotential * 18)
-                    + (batting_ratings.eyeprotential * 18)
-                    + (batting_ratings.kprotential * 18)
+                    (contactrating * 18)
+                    + (gaprating * 9)
+                    + (powerrating * 18)
+                    + (eyerating * 18)
+                    + (krating * 18)
                     + (type_adjustment * 4)
                 ) * BATTING_ADJUSTMENT
         else:
+            if batting_ratings.contactrating < 6:
+                contactrating = batting_ratings.contactrating + (batting_ratings.contactrating-6) 
+            else:
+                contactrating = batting_ratings.contactrating
+            if batting_ratings.powerrating < 0:
+                powerrating = batting_ratings.powerrating + (batting_ratings.powerrating-6) 
+            else:
+                powerrating = batting_ratings.powerrating
+            if batting_ratings.eyerating < 0:
+                eyerating = batting_ratings.eyerating + (batting_ratings.eyerating-6)
+            else:
+                eyerating = batting_ratings.eyerating
+            if batting_ratings.krating < 6:
+                krating = batting_ratings.krating + (batting_ratings.krating-6)
+            else:
+                krating = batting_ratings.krating
+            if batting_ratings.gaprating < 0:
+                gaprating = batting_ratings.gaprating + (batting_ratings.gaprating-6)
+            else:
+                gaprating = batting_ratings.gaprating
             if position == "C":
                 rating = (
-                    (batting_ratings.contactrating * 19)
-                    + (batting_ratings.gaprating * 5)
-                    + (batting_ratings.powerrating * 19)
-                    + (batting_ratings.eyerating * 19)
-                    + (batting_ratings.krating * 19)
+                    (contactrating * 19)
+                    + (gaprating * 5)
+                    + (powerrating * 19)
+                    + (eyerating * 19)
+                    + (krating * 19)
                     + (batting_ratings.speedrating * 15)
                     + (type_adjustment * 4)
                 ) * CATCHER_BATTING_ADJUSTMENT
             else:
                 rating = (
-                    (batting_ratings.contactrating * 19)
-                    + (batting_ratings.gaprating * 5)
-                    + (batting_ratings.powerrating * 19)
-                    + (batting_ratings.eyerating * 19)
-                    + (batting_ratings.krating * 19)
+                    (contactrating * 19)
+                    + (gaprating * 5)
+                    + (powerrating * 19)
+                    + (eyerating * 19)
+                    + (krating * 19)
                     + (type_adjustment * 4)
                 ) * BATTING_ADJUSTMENT
 
@@ -309,20 +354,44 @@ class PlayerRatings:
         ]
 
         if potential is False:
+            if pitching_ratings.stuffrating < 6:
+                stuffrating = pitching_ratings.stuffrating + (pitching_ratings.stuffrating-6) 
+            else:
+                stuffrating = pitching_ratings.stuffrating
+            if pitching_ratings.movementrating < 6:
+                movementrating = pitching_ratings.movementrating + (pitching_ratings.movementrating-6) 
+            else:
+                movementrating = pitching_ratings.movementrating
+            if pitching_ratings.controlrating < 0:
+                controlrating = pitching_ratings.controlrating + (pitching_ratings.controlrating-6)
+            else:
+                controlrating = pitching_ratings.controlrating
             return (
                 (gb_fb_adjustment * 10)
-                + (pitching_ratings.stuffrating * 34)
-                + (pitching_ratings.movementrating * 31)
-                + (pitching_ratings.controlrating * 31)
+                + (stuffrating * 34)
+                + (movementrating * 31)
+                + (controlrating * 31)
                 + (pitching_ratings.stamina * 10)
                 + (pitching_ratings.numpitches * 20)
             ) * BASE_PITCHING_ADJUSTMENT
         else:
+            if pitching_ratings.stuffpotential < 6:
+                stuffrating = pitching_ratings.stuffpotential + (pitching_ratings.stuffpotential-6) 
+            else:
+                stuffrating = pitching_ratings.stuffpotential
+            if pitching_ratings.movementpotential < 6:
+                movementrating = pitching_ratings.movementpotential + (pitching_ratings.movementpotential-6) 
+            else:
+                movementrating = pitching_ratings.movementpotential
+            if pitching_ratings.controlpotential < 0:
+                controlrating = pitching_ratings.controlpotential + (pitching_ratings.controlpotential-6)
+            else:
+                controlrating = pitching_ratings.controlpotential
             return (
                 (gb_fb_adjustment * 10)
-                + (pitching_ratings.stuffpotential * 34)
-                + (pitching_ratings.movementpotential * 31)
-                + (pitching_ratings.controlpotential * 31)
+                + (stuffrating * 34)
+                + (movementrating * 31)
+                + (controlrating * 31)
                 + (pitching_ratings.stamina * 10)
                 + (pitching_ratings.numpitches * 20)
             ) * BASE_PITCHING_ADJUSTMENT
@@ -336,19 +405,43 @@ class PlayerRatings:
         ]
 
         if potential is False:
+            if pitching_ratings.stuffrating < 11:
+                stuffrating = pitching_ratings.stuffrating + (pitching_ratings.stuffrating-6) 
+            else:
+                stuffrating = pitching_ratings.stuffrating
+            if pitching_ratings.movementrating < 11:
+                movementrating = pitching_ratings.movementrating + (pitching_ratings.movementrating-6) 
+            else:
+                movementrating = pitching_ratings.movementrating
+            if pitching_ratings.controlrating < 0:
+                controlrating = pitching_ratings.controlrating + (pitching_ratings.controlrating-6)
+            else:
+                controlrating = pitching_ratings.controlrating
             return (
                 (gb_fb_adjustment * 15)
-                + (pitching_ratings.stuffrating * 45)
-                + (pitching_ratings.movementrating * 45)
-                + (pitching_ratings.controlrating * 26)
+                + (stuffrating * 45)
+                + (movementrating * 45)
+                + (controlrating * 26)
                 + (pitching_ratings.stamina * 0)
             ) * BASE_PITCHING_ADJUSTMENT
         else:
+            if pitching_ratings.stuffpotential < 6:
+                stuffrating = pitching_ratings.stuffpotential + (pitching_ratings.stuffpotential-6) 
+            else:
+                stuffrating = pitching_ratings.stuffpotential
+            if pitching_ratings.movementpotential < 6:
+                movementrating = pitching_ratings.movementpotential + (pitching_ratings.movementpotential-6) 
+            else:
+                movementrating = pitching_ratings.movementpotential
+            if pitching_ratings.controlpotential < 0:
+                controlrating = pitching_ratings.controlpotential + (pitching_ratings.controlpotential-6)
+            else:
+                controlrating = pitching_ratings.controlpotential
             return (
                 (gb_fb_adjustment * 15)
-                + (pitching_ratings.stuffpotential * 45)
-                + (pitching_ratings.movementpotential * 45)
-                + (pitching_ratings.controlpotential * 26)
+                + (stuffrating * 45)
+                + (movementrating * 45)
+                + (controlrating * 26)
                 + (pitching_ratings.stamina * 0)
             ) * BASE_PITCHING_ADJUSTMENT
 
@@ -428,19 +521,19 @@ class PlayerRatings:
         if position == "SP":
             return (
                 (
-                    (pitch1rating * 20)
-                    + (pitch2rating * 20)
-                    + (pitch3rating * 10)
-                    + (pitch4rating * 10)
-                    + (pitching_ratings.velocity - 90.0) * 20
+                    (pitch1rating * 25)
+                    + (pitch2rating * 25)
+                    + (pitch3rating * 15)
+                    + (pitch4rating * 15)
+                    + (pitching_ratings.velocity - 90.0) * 0
                 )
             ) * SP_INDIVIDUAL_PITCHING_ADJUSTMENT
         else:
             return (
                 (
-                    (pitch1rating * 30)
-                    + (pitch2rating * 30)
-                    + (pitching_ratings.velocity - 90.0) * 20
+                    (pitch1rating * 40)
+                    + (pitch2rating * 40)
+                    + (pitching_ratings.velocity - 90.0) * 0
                 )
             ) * RP_INDIVIDUAL_PITCHING_ADJUSTMENT
 

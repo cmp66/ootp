@@ -103,4 +103,8 @@ importBasePlayer(f'./files/{import_datestring}/FA/Players', import_date, db_acce
 importPlayerBatting(f'./files/{import_datestring}/FA/Batting', import_date, db_access)
 importPlayerFielding(f'./files/{import_datestring}/FA/Fielding', import_date, db_access)
 importPlayerPitching(f'./files/{import_datestring}/FA/Pitching', import_date, db_access)
+importBasePlayer(f'./files/{import_datestring}/Draft/Players', import_date, db_access)
+importPlayerBatting(f'./files/{import_datestring}/Draft/Batting', import_date, db_access)
+importPlayerFielding(f'./files/{import_datestring}/Draft/Fielding', import_date, db_access)
+importPlayerPitching(f'./files/{import_datestring}/Draft/Pitching', import_date, db_access)
 #importPlayerStats(f"./files/{import_datestring}/MLB-Stats.html", season, db_access)

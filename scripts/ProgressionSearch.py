@@ -132,7 +132,7 @@ def _init_player_report(playerid, timestamp):
     return player_report
 
 
-import_date = datetime.datetime.strptime("01/01/2057", "%m/%d/%Y")
+import_date = datetime.datetime.strptime("02/26/2057", "%m/%d/%Y")
 reference_date = datetime.datetime.strptime("04/01/2056", "%m/%d/%Y")
 players = _get_all_players(import_date)
 

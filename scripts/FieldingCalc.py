@@ -55,7 +55,7 @@ for target_position in ["C", "1B", "2B", "SS", "3B", "LF", "CF", "RF"]:
     corr, _ = spearmanr(war, ratings)
     zero_war_rating = int((round(ratingstotal / wartotal)))
     print(
-        f"Position: {target_position} Spearmans correlation: {corr}  Two WAR Rating {zero_war_rating}"
+        f"Position: {target_position} Spearmans correlation: {corr}  Zero WAR Rating {zero_war_rating}"
     )
 
 # for key in sorted(players):
