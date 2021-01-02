@@ -3,10 +3,10 @@ from ratings import PlayerRatings
 from scipy.stats import spearmanr
 import datetime
 
-db_access = OOTPDbAccess()
+db_access = OOTPDbAccess('ootp')
 
-season = 2056
-import_date = datetime.datetime.strptime("10/30/2056", "%m/%d/%Y")
+season = 2055
+import_date = datetime.datetime.strptime("04/01/2056", "%m/%d/%Y")
 
 ratings_calc = PlayerRatings()
 
@@ -51,7 +51,13 @@ for target_position in ["SP", "RP", "CL"]:
         ratings.append(rating)
         players[rating].append(player_record.name)
 
-        if stat_record.pitchingwar > -0.5 and stat_record.pitchingwar < 0.5:
+        if target_position == "SP" and war_rate > 1.5/774 and war_rate < 2.5/774:
+            wartotal += 1
+            ratingstotal += rating
+        elif  target_position == "RP" and war_rate > -0.5/258 and war_rate < 0.5/258:
+            wartotal += 1
+            ratingstotal += rating
+        elif  target_position == "CL" and  war_rate > -0.5/258 and war_rate < 0.5/258:
             wartotal += 1
             ratingstotal += rating
 

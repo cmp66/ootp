@@ -233,14 +233,14 @@ class PlayerReports(Base):
 
 
 class OOTPDbAccess:
-    def __init__(self):
+    def __init__(self, save_name):
         type = os.environ["DB_TYPE"]
         host = os.environ["DB_HOST"]
         user = os.environ["DB_USERNAME"]
         password = os.environ["DB_PASSWORD"]
         if type == "mysql":
             self.engine = create_engine(
-                f"mysql+pymysql://{user}:{password}@{host}:3306/ootp", echo=False
+                f"mysql+pymysql://{user}:{password}@{host}:3306/{save_name}", echo=False
             )
             Base.metadata.create_all(self.engine)
         else:
@@ -409,3 +409,10 @@ class OOTPDbAccess:
 
     def get_all_players_by_date(self, import_date):
         return self.session.query(Player).filter(Player.timestamp == import_date)
+
+    def get_all_mlb_players_by_date(self, import_date):
+        return (
+            self.session.query(Player)
+            .filter(Player.timestamp == import_date)
+            .filter(Player.level == 'MLB')
+        )

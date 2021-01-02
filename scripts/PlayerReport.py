@@ -6,7 +6,6 @@ import sys
 import os
 import datetime
 
-db_access = OOTPDbAccess()
 
 ratings_calc = PlayerRatings()
 
@@ -22,16 +21,21 @@ def _init_missing_player_report(player):
     player_report.current = -100
     player_report.potential = -100
 
+    return player_report
+
 datestamp = sys.argv[1]
 season = int(sys.argv[2])
 import_date = datetime.datetime.strptime(datestamp, "%m/%d/%Y")
 filter_limit = float(sys.argv[3])
 
+save_name = sys.argv[4]
+db_access = OOTPDbAccess(save_name)
+
 missing_players = []
-if len(sys.argv) < 5:
+if len(sys.argv) < 6:
     players = _get_all_players(import_date)
 else:
-    player_file = sys.argv[4]
+    player_file = sys.argv[5]
     players = []
     parser = OOTPParser()
     if os.path.isfile(player_file):
@@ -93,7 +97,7 @@ for player in players:
         + f"{battingwar},{pitchingwar},{player.majorleagueyears}"
     )
 
-#print(f'Missing players {missing_players}')
+print(f'Missing players {missing_players}')
 
 # changed_batters_sorted = list(changed_batters.keys())
 # changed_batters_sorted.sort(reverse=True)

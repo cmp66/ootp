@@ -1,7 +1,12 @@
 ﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-; #Warn  ; Enable warnings to assist with detecting common errors.
+#Warn  ; Enable warnings to assist with detecting common errors.
+#SingleInstance force
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+
+
+Sleep 5000 ;this needs to be here to allow init functions to complete
+
 
 WinActivate Out of the Park Baseball
 Sleep 1000
@@ -84,9 +89,9 @@ ExportOOTPRatings(x)
     Sleep 1000
 }
 
-ResetPageIndex()
+ResetPageIndex(resetoffset)
 {
-    MouseMove, 3530, 490
+    MouseMove, resetoffset, 490
     Sleep 250
     Click, down
     Sleep 250
@@ -94,7 +99,7 @@ ResetPageIndex()
     Sleep 250
 }
 
-ExportOOTPRatingsPaging(x, pagecount)
+ExportOOTPRatingsPaging(x, pagecount, resetoffset)
 {
     Loop, %pagecount%
     {
@@ -108,56 +113,71 @@ ExportOOTPRatingsPaging(x, pagecount)
         Sleep 250
     }
 
-    ResetPageIndex()
+    ResetPageIndex(resetoffset)
 }
 
 
+; all player
+; ToggleMLPlayers()
+; ToggleIntPlayers()
+; SelectExportType(1417) ; Player Export
+; ExportOOTPRatingsPaging(1040,235, 3503)
+; SelectExportType(1385) ; Batter Export
+; ExportOOTPRatingsPaging(1040,235, 3503)
+; SelectExportType(1453) ; Fielding Export
+; ExportOOTPRatingsPaging(1040,235, 3503)
+; SelectExportType(1502) ; Pitching Export
+; ExportOOTPRatingsPaging(1040,235, 3503)
+; ToggleMLPlayers()
+; ToggleIntPlayers()
 
-SelectFilterType(1103) ; MLB
-SelectExportType(1417) ; Player Export
-ExportOOTPRatings(1070)
-SelectExportType(1385) ; Batter Export
-ExportOOTPRatings(1070)
-SelectExportType(1453) ; Fielding Export
-ExportOOTPRatings(1070)
-SelectExportType(1502) ; Pitching Export
-ExportOOTPRatings(1070)
+; SelectFilterType(1103) ; MLB
+; SelectExportType(1417) ; Player Export
+; ExportOOTPRatings(1070)
+; SelectExportType(1385) ; Batter Export
+; ExportOOTPRatings(1070)
+; SelectExportType(1453) ; Fielding Export
+; ExportOOTPRatings(1070)
+; SelectExportType(1502) ; Pitching Export
+; ExportOOTPRatings(1070)
 
-ToggleIntPlayers()
-SelectFilterType(1142) ; INT
-SelectExportType(1417) ; Player Export
-ExportOOTPRatings(1070)
-SelectExportType(1385) ; Batter Export
-ExportOOTPRatings(1070)
-SelectExportType(1453) ; Fielding Export
-ExportOOTPRatings(1070)
-SelectExportType(1502) ; Pitching Export
-ExportOOTPRatings(1070)
-ToggleIntPlayers()
+; ToggleIntPlayers()
+; SelectFilterType(1142) ; INT
+; SelectExportType(1417) ; Player Export
+; ExportOOTPRatings(1070)
+; SelectExportType(1385) ; Batter Export
+; ExportOOTPRatings(1070)
+; SelectExportType(1453) ; Fielding Export
+; ExportOOTPRatings(1070)
+; SelectExportType(1502) ; Pitching Export
+; ExportOOTPRatings(1070)
+; ToggleIntPlayers()
 
 ToggleMLPlayers()
 
 SelectFilterType(1179) ; FS
 SelectExportType(1417) ; Player Export
-ExportOOTPRatingsPaging(1150,2)
+ExportOOTPRatingsPaging(1150,67, 3530)
 SelectExportType(1385) ; Batter Export
-ExportOOTPRatingsPaging(1150,2)
+ExportOOTPRatingsPaging(1150,67, 3530)
 SelectExportType(1453) ; Fielding Export
-ExportOOTPRatingsPaging(1150,2)
+ExportOOTPRatingsPaging(1150,67, 3530)
 SelectExportType(1502) ; Pitching Export
-ExportOOTPRatingsPaging(1150,2)
+ExportOOTPRatingsPaging(1150,67, 3530)
 
 SelectFilterType(1212) ; SS
 SelectExportType(1417) ; Player Export
-ExportOOTPRatingsPaging(1150,2)
+ExportOOTPRatingsPaging(1150,51, 3530)
 SelectExportType(1385) ; Batter Export
-ExportOOTPRatingsPaging(1150,2)
+ExportOOTPRatingsPaging(1150,51, 3530)
 SelectExportType(1453) ; Fielding Export
-ExportOOTPRatingsPaging(1150,2)
+ExportOOTPRatingsPaging(1150,51, 3530)
 SelectExportType(1502) ; Pitching Export
-ExportOOTPRatingsPaging(1150,2)
+ExportOOTPRatingsPaging(1150,51, 3530)
 
 ToggleMLPlayers()
+
+Esc::ExitApp
 
 
 

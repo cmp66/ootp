@@ -3,7 +3,7 @@ from ratings import PlayerRatings
 from scipy.stats import spearmanr
 import datetime
 
-db_access = OOTPDbAccess()
+db_access = OOTPDbAccess("ootp")
 
 season = 2056
 import_date = datetime.datetime.strptime("10/30/2056", "%m/%d/%Y")
@@ -28,7 +28,7 @@ for target_position in ["C", "1B", "2B", "SS", "3B", "LF", "CF", "RF"]:
 
         if player_record.position != target_position:
             continue
-        elif stat_record.plateapp < 30:
+        elif stat_record.plateapp < 100:
             continue
 
         fielding_record = db_access.get_fielding_record(player_id, import_date)
@@ -43,7 +43,8 @@ for target_position in ["C", "1B", "2B", "SS", "3B", "LF", "CF", "RF"]:
         ratings.append(rating)
         players[rating].append(player_record.name)
 
-        if stat_record.battingwar > -0.5 and stat_record.battingwar < 0.5:
+        if war_rate > 1.5/600 and war_rate < 2.5/600:
+        #if stat_record.battingwar > 1.5 and stat_record.battingwar < 2.5:
             wartotal += 1
             ratingstotal += rating
 

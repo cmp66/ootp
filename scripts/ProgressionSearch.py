@@ -4,7 +4,6 @@ from ratings import PlayerRatings
 import sys
 import datetime
 
-db_access = OOTPDbAccess()
 
 ratings_calc = PlayerRatings()
 
@@ -130,10 +129,13 @@ def _init_player_report(playerid, timestamp):
     player_report.batteroverallfieldingcurrent = 0
 
     return player_report
+save = sys.argv[3]
+import_string = sys.argv[1]
+reference_string = sys.argv[2]
+db_access = OOTPDbAccess(save)
 
-
-import_date = datetime.datetime.strptime("02/26/2057", "%m/%d/%Y")
-reference_date = datetime.datetime.strptime("04/01/2056", "%m/%d/%Y")
+import_date = datetime.datetime.strptime(import_string, "%m/%d/%Y")
+reference_date = datetime.datetime.strptime(reference_string, "%m/%d/%Y")
 players = _get_all_players(import_date)
 
 changed_batters = {}

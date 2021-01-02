@@ -50,14 +50,14 @@ RIGHTFIELD_BATTING_ADJUST = 0.85
 # DH_NORMALIZATION = 0
 
 ### 2056
-CATCHER_NORMALIZATION = 18
-SHORTSTOP_NORMALIZATION = 7
-SECONDBASE_NORMALIZATION = 12
-THIRDBASE_NORMALIZATION = 6
-FIRSTBASE_NORMALIZATION = 12
-LEFTFIELD_NORMALIZATION = 10
-CENTERFIELD_NORMALIZATION = 3
-RIGHTFIELD_NORMALIZATION = 6
+CATCHER_NORMALIZATION = 15
+SHORTSTOP_NORMALIZATION = -3
+SECONDBASE_NORMALIZATION = 6
+THIRDBASE_NORMALIZATION = 3
+FIRSTBASE_NORMALIZATION = 3
+LEFTFIELD_NORMALIZATION = 3
+CENTERFIELD_NORMALIZATION = 0
+RIGHTFIELD_NORMALIZATION = 0
 DH_NORMALIZATION = 0
 
 
@@ -88,7 +88,7 @@ RP_PITCH_ADJUST = 0.10
 # RP_NORMALIZATION = 20
 
 ### 2056
-SP_NORMALIZATION = 23
+SP_NORMALIZATION = 16
 RP_NORMALIZATION = 6
 
 
@@ -214,23 +214,23 @@ class PlayerRatings:
                 powerrating = batting_ratings.powerpotential + (batting_ratings.powerpotential-6) 
             else:
                 powerrating = batting_ratings.powerpotential
-            if batting_ratings.eyepotential < 0:
-                eyerating = batting_ratings.eyepotential + (batting_ratings.eyepotential-6)
+            if batting_ratings.eyeprotential < 0:
+                eyerating = batting_ratings.eyeprotential + (batting_ratings.eyeprotential-6)
             else:
-                eyerating = batting_ratings.eyepotential
-            if batting_ratings.kpotential < 6:
-                krating = batting_ratings.kpotential + (batting_ratings.kpotential-6)
+                eyerating = batting_ratings.eyeprotential
+            if batting_ratings.kprotential < 6:
+                krating = batting_ratings.kprotential + (batting_ratings.kprotential-6)
             else:
-                krating = batting_ratings.kpotential
+                krating = batting_ratings.kprotential
             if batting_ratings.gappotential < 0:
                 gaprating = batting_ratings.gappotential + (batting_ratings.gappotential-6)
             else:
                 gaprating = batting_ratings.gappotential
             if position == "C":
                 contactrating = batting_ratings.contactpotential + (batting_ratings.contactpotential-6)
-                powerrating = batting_ratings.pwerpotential + (batting_ratings.powerpotential-6) 
-                eyerating = batting_ratings.eyepotential + (batting_ratings.eyepotential-6)
-                krating = batting_ratings.kpotential + (batting_ratings.kpotential-6)
+                powerrating = batting_ratings.powerpotential + (batting_ratings.powerpotential-6) 
+                eyerating = batting_ratings.eyeprotential + (batting_ratings.eyeprotential-6)
+                krating = batting_ratings.kprotential + (batting_ratings.kprotential-6)
                 gaprating = batting_ratings.gappotential + (batting_ratings.gappotential-6) 
                 rating = (
                     (contactrating * 18)
@@ -513,7 +513,7 @@ class PlayerRatings:
             pitches = self.get_pitching_ratings(pitching_ratings)
         pitches.sort()
 
-        pitch1rating = pitches[0]
+        pitch1rating = pitches[0] if len(pitches) > 0 else 0
         pitch2rating = pitches[1] if len(pitches) > 1 else 0
         pitch3rating = pitches[2] if len(pitches) > 2 else 0
         pitch4rating = pitches[3] if len(pitches) > 3 else 0

@@ -5,6 +5,33 @@ import datetime
 
 
 class OOTPParser:
+    def parse_ootp_file(self, playerfile, import_date):
+        parser = BeautifulSoup(playerfile, "lxml")
+        parsed_players = {}
+        parsed_players["player"] = []
+        parsed_players["batting"] = []
+        parsed_players["fielding"] = []
+        parsed_players["pitching"] = []
+
+        player_table = parser.body.table.table
+        indicator_column = player_table.tr.find_all("th")[3]
+        playerfile.seek(0)
+        if indicator_column.string == "GAP":
+            parsed_players["batting"].extend(self.parse_batting_file(playerfile, import_date))
+        elif indicator_column.string == "IF RNG":
+            parsed_players["fielding"].extend(self.parse_fielding_file(playerfile, import_date))
+        elif indicator_column.string == "STU":
+             parsed_players["pitching"].extend(self.parse_pitching_file(playerfile, import_date))
+        elif indicator_column.string == "TM":
+             parsed_players["player"].extend(self.parse_player_file(playerfile, import_date))
+        else:
+            print ("NO CLUE what this file is")
+        
+        return parsed_players
+        
+
+
+
     def parse_player_file(self, playerfile, import_date):
         parser = BeautifulSoup(playerfile, "lxml")
         parsed_players = []
@@ -132,21 +159,21 @@ class OOTPParser:
         player.playerid = int(attributes[0].string)
         player.timestamp = import_date
         player.name = attributes[1].string
-        player.contactrating = int(attributes[2].string)
-        player.gaprating = int(attributes[3].string)
-        player.powerrating = int(attributes[4].string)
-        player.eyerating = int(attributes[5].string)
-        player.krating = int(attributes[6].string)
-        player.contactvleft = int(attributes[7].string)
-        player.gapvleft = int(attributes[8].string)
-        player.powervleft = int(attributes[9].string)
-        player.eyevleft = int(attributes[10].string)
-        player.kvleft = int(attributes[11].string)
-        player.contactvright = int(attributes[12].string)
-        player.gapvright = int(attributes[13].string)
-        player.powerrightt = int(attributes[14].string)
-        player.eyevright = int(attributes[15].string)
-        player.kvright = int(attributes[16].string)
+        player.contactrating = int(self._convert_unknown(attributes[2].string))
+        player.gaprating = int(self._convert_unknown(attributes[3].string))
+        player.powerrating = int(self._convert_unknown(attributes[4].string))
+        player.eyerating = int(self._convert_unknown(attributes[5].string))
+        player.krating = int(self._convert_unknown(attributes[6].string))
+        player.contactvleft = int(self._convert_unknown(attributes[7].string))
+        player.gapvleft = int(self._convert_unknown(attributes[8].string))
+        player.powervleft = int(self._convert_unknown(attributes[9].string))
+        player.eyevleft = int(self._convert_unknown(attributes[10].string))
+        player.kvleft = int(self._convert_unknown(attributes[11].string))
+        player.contactvright = int(self._convert_unknown(attributes[12].string))
+        player.gapvright = int(self._convert_unknown(attributes[13].string))
+        player.powerrightt = int(self._convert_unknown(attributes[14].string))
+        player.eyevright = int(self._convert_unknown(attributes[15].string))
+        player.kvright = int(self._convert_unknown(attributes[16].string))
         player.contactpotential = int(attributes[17].string)
         player.gappotential = int(attributes[18].string)
         player.powerpotential = int(attributes[19].string)
@@ -202,15 +229,15 @@ class OOTPParser:
         player.timestamp = import_date
         player.name = attributes[1].string
 
-        player.stuffrating = int(attributes[3].string)
-        player.movementrating = int(attributes[4].string)
-        player.controlrating = int(attributes[5].string)
-        player.stuffvleft = int(attributes[6].string)
-        player.movementvleft = int(attributes[7].string)
-        player.controlvleft = int(attributes[8].string)
-        player.stuffvright = int(attributes[9].string)
-        player.movementvright = int(attributes[10].string)
-        player.controlvright = int(attributes[11].string)
+        player.stuffrating = int(self._convert_unknown(attributes[3].string))
+        player.movementrating = int(self._convert_unknown(attributes[4].string))
+        player.controlrating = int(self._convert_unknown(attributes[5].string))
+        player.stuffvleft = int(self._convert_unknown(attributes[6].string))
+        player.movementvleft = int(self._convert_unknown(attributes[7].string))
+        player.controlvleft = int(self._convert_unknown(attributes[8].string))
+        player.stuffvright = int(self._convert_unknown(attributes[9].string))
+        player.movementvright = int(self._convert_unknown(attributes[10].string))
+        player.controlvright = int(self._convert_unknown(attributes[11].string))
         player.stuffpotential = int(attributes[12].string)
         player.movementpotential = int(attributes[13].string)
         player.controlpotential = int(attributes[14].string)
