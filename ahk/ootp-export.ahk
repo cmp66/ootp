@@ -155,25 +155,45 @@ ExportOOTPRatingsPaging(x, pagecount, resetoffset)
 
 ToggleMLPlayers()
 
+; SelectFilterType(1179) ; FS
+; SelectExportType(1417) ; Player Export
+; ExportOOTPRatings(1150)
+; SelectExportType(1385) ; Batter Export
+; ExportOOTPRatings(1150)
+; SelectExportType(1453) ; Fielding Export
+; ExportOOTPRatings(1150)
+; SelectExportType(1502) ; Pitching Export
+; ExportOOTPRatings(1150)
+
+; SelectFilterType(1212) ; SS
+; SelectExportType(1417) ; Player Export
+; ExportOOTPRatings(1150)
+; SelectExportType(1385) ; Batter Export
+; ExportOOTPRatings(1150)
+; SelectExportType(1453) ; Fielding Export
+; ExportOOTPRatings(1150)
+; SelectExportType(1502) ; Pitching Export
+; ExportOOTPRatings(1150)
+
 SelectFilterType(1179) ; FS
 SelectExportType(1417) ; Player Export
-ExportOOTPRatingsPaging(1150,67, 3530)
+ExportOOTPRatingsPaging(1150,79, 3530)
 SelectExportType(1385) ; Batter Export
-ExportOOTPRatingsPaging(1150,67, 3530)
+ExportOOTPRatingsPaging(1150,79, 3530)
 SelectExportType(1453) ; Fielding Export
-ExportOOTPRatingsPaging(1150,67, 3530)
+ExportOOTPRatingsPaging(1150,79, 3530)
 SelectExportType(1502) ; Pitching Export
-ExportOOTPRatingsPaging(1150,67, 3530)
+ExportOOTPRatingsPaging(1150,79, 3530)
 
 SelectFilterType(1212) ; SS
 SelectExportType(1417) ; Player Export
-ExportOOTPRatingsPaging(1150,51, 3530)
+ExportOOTPRatingsPaging(1150,74, 3530)
 SelectExportType(1385) ; Batter Export
-ExportOOTPRatingsPaging(1150,51, 3530)
+ExportOOTPRatingsPaging(1150,74, 3530)
 SelectExportType(1453) ; Fielding Export
-ExportOOTPRatingsPaging(1150,51, 3530)
+ExportOOTPRatingsPaging(1150,74, 3530)
 SelectExportType(1502) ; Pitching Export
-ExportOOTPRatingsPaging(1150,51, 3530)
+ExportOOTPRatingsPaging(1150,74, 3530)
 
 ToggleMLPlayers()
 

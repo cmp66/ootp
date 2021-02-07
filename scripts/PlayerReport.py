@@ -97,7 +97,7 @@ for player in players:
         + f"{battingwar},{pitchingwar},{player.majorleagueyears}"
     )
 
-print(f'Missing players {missing_players}')
+#print(f'Missing players {missing_players}')
 
 # changed_batters_sorted = list(changed_batters.keys())
 # changed_batters_sorted.sort(reverse=True)

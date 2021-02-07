@@ -28,7 +28,7 @@ def _add_batter_change(increase, batter):
         changed_batters[increase].append(batter)
 
 
-def _get_pitcher_diff_actual(id, report_time, reference_time):
+def _get_pitcher_diff_actual(id, report_time, reference_time, scale_factor):
     report_record = db_access.get_pitching_record(id, report_time)
     reference_record = db_access.get_pitching_record(id, reference_time)
 
@@ -44,7 +44,7 @@ def _get_pitcher_diff_actual(id, report_time, reference_time):
     return total_change
 
 
-def _get_pitcher_diff_potential(id, report_time, reference_time):
+def _get_pitcher_diff_potential(id, report_time, reference_time, scale_factor):
     report_record = db_access.get_pitching_record(id, report_time)
     reference_record = db_access.get_pitching_record(id, reference_time)
 
@@ -60,7 +60,7 @@ def _get_pitcher_diff_potential(id, report_time, reference_time):
     return total_change
 
 
-def _get_batter_diff_actual(id, report_time, reference_time):
+def _get_batter_diff_actual(id, report_time, reference_time, scale_factor):
     report_record = db_access.get_batting_record(id, report_time)
     reference_record = db_access.get_batting_record(id, reference_time)
 
@@ -78,7 +78,7 @@ def _get_batter_diff_actual(id, report_time, reference_time):
     return total_change
 
 
-def _get_batter_diff_potential(id, report_time, reference_time):
+def _get_batter_diff_potential(id, report_time, reference_time, scale_factor):
     report_record = db_access.get_batting_record(id, report_time)
     reference_record = db_access.get_batting_record(id, reference_time)
 
@@ -132,7 +132,13 @@ def _init_player_report(playerid, timestamp):
 save = sys.argv[3]
 import_string = sys.argv[1]
 reference_string = sys.argv[2]
+scale = sys.argv[4]
 db_access = OOTPDbAccess(save)
+
+if scale is None:
+    scale_factor = 1.0
+else:
+    scale_factor = float(scale)
 
 import_date = datetime.datetime.strptime(import_string, "%m/%d/%Y")
 reference_date = datetime.datetime.strptime(reference_string, "%m/%d/%Y")
@@ -164,61 +170,61 @@ for player in players:
     if player.position in ["SP", "RP", "CL"]:
         pitcher_ratings = db_access.get_pitching_record(player.id, import_date)
         player_report.pitcherratingsdiffcurrent = _get_pitcher_diff_actual(
-            player.id, import_date, reference_date
+            player.id, import_date, reference_date, scale_factor
         )
         player_report.pitcherratingsdiffpotential = _get_pitcher_diff_potential(
-            player.id, import_date, reference_date
+            player.id, import_date, reference_date, scale_factor
         )
         (
             player_report.starteroverallpotential,
             player_report.starterbasepotential,
             player_report.starterindivpotential,
         ) = ratings_calc.calculate_starter_pitcher_rating(
-            pitcher_ratings, player.position, True
+            pitcher_ratings, player.position, True, scale_factor
         )
         (
             player_report.starteroverallcurrent,
             player_report.starterbasecurrent,
             player_report.starterindivcurrent,
         ) = ratings_calc.calculate_starter_pitcher_rating(
-            pitcher_ratings, player.position, False
+            pitcher_ratings, player.position, False, scale_factor
         )
         (
             player_report.reliefoverallpotential,
             player_report.reliefbasepotential,
             player_report.reliefindivpotential,
         ) = ratings_calc.calculate_relief_pitcher_rating(
-            pitcher_ratings, player.position, True
+            pitcher_ratings, player.position, True, scale_factor
         )
         (
             player_report.reliefoverallcurrent,
             player_report.reliefbasecurrent,
             player_report.reliefindivcurrent,
         ) = ratings_calc.calculate_relief_pitcher_rating(
-            pitcher_ratings, player.position, False
+            pitcher_ratings, player.position, False, scale_factor
         )
     else:
         batter_ratings = db_access.get_batting_record(player.id, import_date)
         fielding_ratings = db_access.get_fielding_record(player.id, import_date)
         player_report.batterratingsdiffcurrent = _get_batter_diff_actual(
-            player.id, import_date, reference_date
+            player.id, import_date, reference_date,  scale_factor
         )
         player_report.batterratingsdiffpotential = _get_batter_diff_potential(
-            player.id, import_date, reference_date
+            player.id, import_date, reference_date,  scale_factor
         )
         (
             player_report.batteroverallpotential,
             player_report.batteroverallbattingpotential,
             player_report.batteroverallfieldingpotential,
         ) = ratings_calc.calculate_overall_batter_rating(
-            fielding_ratings, batter_ratings, player.position, True
+            fielding_ratings, batter_ratings, player.position, True, scale_factor
         )
         (
             player_report.batteroverallcurrent,
             player_report.batteroverallbattingcurrent,
             player_report.batteroverallfieldingcurrent,
         ) = ratings_calc.calculate_overall_batter_rating(
-            fielding_ratings, batter_ratings, player.position, False
+            fielding_ratings, batter_ratings, player.position, False, scale_factor
         )
 
     db_access.add_player_report_record(player_report)

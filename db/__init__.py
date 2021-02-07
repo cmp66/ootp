@@ -382,7 +382,7 @@ class OOTPDbAccess:
             .filter(PlayerPitching.timestamp == timestamp)
             .first()
         )
-
+        
     def get_fielding_record(self, id, timestamp):
         return (
             self.session.query(PlayerFielding)
