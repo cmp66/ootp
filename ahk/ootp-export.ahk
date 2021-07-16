@@ -177,23 +177,23 @@ ToggleMLPlayers()
 
 SelectFilterType(1179) ; FS
 SelectExportType(1417) ; Player Export
-ExportOOTPRatingsPaging(1150,79, 3530)
+ExportOOTPRatingsPaging(1150,65, 3530)
 SelectExportType(1385) ; Batter Export
-ExportOOTPRatingsPaging(1150,79, 3530)
+ExportOOTPRatingsPaging(1150,65, 3530)
 SelectExportType(1453) ; Fielding Export
-ExportOOTPRatingsPaging(1150,79, 3530)
+ExportOOTPRatingsPaging(1150,65, 3530)
 SelectExportType(1502) ; Pitching Export
-ExportOOTPRatingsPaging(1150,79, 3530)
+ExportOOTPRatingsPaging(1150,65, 3530)
 
 SelectFilterType(1212) ; SS
 SelectExportType(1417) ; Player Export
-ExportOOTPRatingsPaging(1150,74, 3530)
+ExportOOTPRatingsPaging(1150,51, 3530)
 SelectExportType(1385) ; Batter Export
-ExportOOTPRatingsPaging(1150,74, 3530)
+ExportOOTPRatingsPaging(1150,51, 3530)
 SelectExportType(1453) ; Fielding Export
-ExportOOTPRatingsPaging(1150,74, 3530)
+ExportOOTPRatingsPaging(1150,51, 3530)
 SelectExportType(1502) ; Pitching Export
-ExportOOTPRatingsPaging(1150,74, 3530)
+ExportOOTPRatingsPaging(1150,51, 3530)
 
 ToggleMLPlayers()
 

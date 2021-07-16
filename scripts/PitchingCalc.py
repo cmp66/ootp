@@ -3,27 +3,61 @@ from ratings import PlayerRatings
 from scipy.stats import spearmanr
 import datetime
 
-db_access = OOTPDbAccess('ootp')
 
+# PBL
+# player_sets = [
+#     {
+#         "season": 2055,
+#         "import_date" : "04/01/2056"
+#     },
+#     {
+#         "season": 2056,
+#         "import_date" : "10/30/2056"
+#     },
+#     {
+#         "season": 2057,
+#         "import_date" : "11/05/2057"
+#     },
+#     {
+#         "season": 2058,
+#         "import_date" : "11/29/2058"
+#     }
+
+# ]
+
+#miami
+#player_sets = [
+#    {
+#        "season": 2034,
+#        "import_date" : "11/21/2034"
+#    },
+#]
+
+#ABL
 player_sets = [
-    {
-        "season": 2055,
-        "import_date" : "04/01/2056"
+   {
+       "season": 2047,
+       "import_date" : "11/24/2047"
+   },
+   {
+        "season": 2048,
+        "import_date" : "12/13/2048"
     },
-    {
-        "season": 2056,
-        "import_date" : "10/30/2056"
-    }
-
 ]
 
+
+db_access = OOTPDbAccess('abl')
 ratings_calc = PlayerRatings()
 
+
+scale = 10.0
+usePotential = True
+
 players = {}
-for i in range(201):
+for i in range(500):
     players[i] = []
 
-for target_position in ["SP", "RP", "CL"]:
+for target_position in ["SP","RP"]:
     # for target_position in ['C', '1B', '2B', 'SS', '3B', 'LF', 'CF', 'RF']:
     ratings = []
     war = []
@@ -42,18 +76,18 @@ for target_position in ["SP", "RP", "CL"]:
             elif stat_record.battersfaced < 100:
                 continue
 
-            pitching_record = db_access.get_pitching_record(player_id, import_date, 1.0)
+            pitching_record = db_access.get_pitching_record(player_id, import_date)
 
             if pitching_record.numpitches < 3 and target_position == "SP":
                 continue
 
             if target_position == "SP":
                 rating, base, indiv = ratings_calc.calculate_starter_pitcher_rating(
-                    pitching_record, player_record.position, False
+                    pitching_record, player_record.position, usePotential, scale
                 )
             else:
                 rating, base, indiv = ratings_calc.calculate_relief_pitcher_rating(
-                    pitching_record, player_record.position, False
+                    pitching_record, player_record.position, usePotential, scale
                 )
 
             war_rate = stat_record.pitchingwar / stat_record.battersfaced

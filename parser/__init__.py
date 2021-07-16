@@ -174,19 +174,19 @@ class OOTPParser:
         player.powerrightt = int(self._convert_unknown(attributes[14].string))
         player.eyevright = int(self._convert_unknown(attributes[15].string))
         player.kvright = int(self._convert_unknown(attributes[16].string))
-        player.contactpotential = int(attributes[17].string)
-        player.gappotential = int(attributes[18].string)
-        player.powerpotential = int(attributes[19].string)
-        player.eyeprotential = int(attributes[20].string)
-        player.kprotential = int(attributes[21].string)
-        player.buntrating = int(attributes[22].string)
-        player.buntforhitrating = int(attributes[23].string)
+        player.contactpotential = int(self._convert_unknown(attributes[17].string))
+        player.gappotential = int(self._convert_unknown(attributes[18].string))
+        player.powerpotential = int(self._convert_unknown(attributes[19].string))
+        player.eyeprotential = int(self._convert_unknown(attributes[20].string))
+        player.kprotential = int(self._convert_unknown(attributes[21].string))
+        player.buntrating = int(self._convert_unknown(attributes[22].string))
+        player.buntforhitrating = int(self._convert_unknown(attributes[23].string))
         player.battedballtype = attributes[24].string
         player.groundballtype = attributes[25].string
         player.flyballtype = attributes[26].string
-        player.speedrating = int(attributes[27].string)
-        player.stealrating = int(attributes[28].string)
-        player.baserunningrating = int(attributes[29].string)
+        player.speedrating = int(self._convert_unknown(attributes[27].string))
+        player.stealrating = int(self._convert_unknown(attributes[28].string))
+        player.baserunningrating = int(self._convert_unknown(attributes[29].string))
 
         return player
 
@@ -197,15 +197,15 @@ class OOTPParser:
         player.playerid = int(attributes[0].string)
         player.timestamp = import_date
         player.name = attributes[1].string
-        player.infieldrange = int(attributes[3].string)
-        player.infieldarm = int(attributes[4].string)
+        player.infieldrange = int(self._convert_unknown(attributes[3].string))
+        player.infieldarm = int(self._convert_unknown(attributes[4].string))
         player.turndoubleplay = int(self._convert_unknown(attributes[5].string))
-        player.infielderror = int(attributes[6].string)
-        player.outfieldrange = int(attributes[7].string)
-        player.outfieldarm = int(attributes[8].string)
-        player.outfielderror = int(attributes[9].string)
-        player.catcherarm = int(attributes[10].string)
-        player.catcherability = int(attributes[11].string)
+        player.infielderror = int(self._convert_unknown(attributes[6].string))
+        player.outfieldrange = int(self._convert_unknown(attributes[7].string))
+        player.outfieldarm = int(self._convert_unknown(attributes[8].string))
+        player.outfielderror = int(self._convert_unknown(attributes[9].string))
+        player.catcherarm = int(self._convert_unknown(attributes[10].string))
+        player.catcherability = int(self._convert_unknown(attributes[11].string))
         player.primarydefensiverating = int(
             self._convert_unknown(attributes[12].string)
         )
@@ -238,9 +238,9 @@ class OOTPParser:
         player.stuffvright = int(self._convert_unknown(attributes[9].string))
         player.movementvright = int(self._convert_unknown(attributes[10].string))
         player.controlvright = int(self._convert_unknown(attributes[11].string))
-        player.stuffpotential = int(attributes[12].string)
-        player.movementpotential = int(attributes[13].string)
-        player.controlpotential = int(attributes[14].string)
+        player.stuffpotential = int(self._convert_unknown(attributes[12].string))
+        player.movementpotential = int(self._convert_unknown(attributes[13].string))
+        player.controlpotential = int(self._convert_unknown(attributes[14].string))
         player.fastballrating = int(self._convert_unknown(attributes[15].string))
         player.fastballpotential = int(self._convert_unknown(attributes[16].string))
         player.changeuprating = int(self._convert_unknown(attributes[17].string))
@@ -270,7 +270,7 @@ class OOTPParser:
         player.velocity = int(self._convert_unknown(attributes[41].string))
         player.armslot = attributes[42].string
         player.pitchertype = attributes[43].string
-        player.stamina = int(attributes[44].string)
+        player.stamina = int(self._convert_unknown(attributes[44].string))
 
         return player
 

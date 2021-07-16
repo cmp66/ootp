@@ -57,7 +57,8 @@ print(
     + "START OVR CUR,START OVR POT,RELIEF OVR CUR,RELIEF OVR POT,BAT OVR CUR,BAT OVR POT,"
     + "START BASE CUR,START INDIV CUR,START BASE POT, START INDIV POT,"
     + "RELIEF BASE CUR,RELIEF INDIV CUR,RELIEF BASE POT,RELIEF INDIV POT,"
-    + "BAT HIT CUR,BAT FIELD CUR,BAT HIT POT,BAT FIELD POT,BATTER WAR,PITCHER WAR,MLB YEARS"
+    + "BAT HIT CUR,BAT FIELD CUR,BAT HIT POT,BAT FIELD POT,BATTER WAR,PITCHER WAR,MLB YEARS,"
+    + "WORK ETHIC,INTELLIGENCE,LEADER,GREED,LOYALTY,PERSONALITY"
 )
 
 for player in players:
@@ -94,7 +95,8 @@ for player in players:
         + f"{player_report.reliefbasepotential},{player_report.reliefindivpotential},"
         + f"{player_report.batteroverallbattingcurrent},{player_report.batteroverallfieldingcurrent},"
         + f"{player_report.batteroverallbattingpotential},{player_report.batteroverallfieldingpotential},"
-        + f"{battingwar},{pitchingwar},{player.majorleagueyears}"
+        + f"{battingwar},{pitchingwar},{player.majorleagueyears},"
+        + f"{player.workethic},{player.intelligence},{player.leader},{player.greed}, {player.loyalty},{player.personality}"
     )
 
 #print(f'Missing players {missing_players}')

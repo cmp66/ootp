@@ -26,8 +26,8 @@ SECONDBASE_FIELD_ADJUST = 0.20
 SECONDBASE_BATTING_ADJUST = 0.80
 SHORTSTOP_FIELD_ADJUST = 0.30
 SHORTSTOP_BATTING_ADJUST = 0.70
-THIRDBASE_FIELD_ADJUST = 0.15
-THIRDBASE_BATTING_ADJUST = 0.85
+THIRDBASE_FIELD_ADJUST = 0.20
+THIRDBASE_BATTING_ADJUST = 0.80
 LEFTFIELD_FIELD_ADJUST = 0.15
 LEFTFIELD_BATTING_ADJUST = 0.85
 CENTERFIELD_FIELD_ADJUST = 0.30
@@ -49,15 +49,37 @@ RIGHTFIELD_BATTING_ADJUST = 0.85
 # RIGHTFIELD_NORMALIZATION = 5
 # DH_NORMALIZATION = 0
 
-### 2056
-CATCHER_NORMALIZATION = 15
-SHORTSTOP_NORMALIZATION = -3
-SECONDBASE_NORMALIZATION = 6
-THIRDBASE_NORMALIZATION = 3
-FIRSTBASE_NORMALIZATION = 3
-LEFTFIELD_NORMALIZATION = 4
-CENTERFIELD_NORMALIZATION = -4
-RIGHTFIELD_NORMALIZATION = -1
+### 2056 PBL
+# CATCHER_NORMALIZATION = 16
+# SHORTSTOP_NORMALIZATION = -7
+# SECONDBASE_NORMALIZATION = 2
+# THIRDBASE_NORMALIZATION = -5
+# FIRSTBASE_NORMALIZATION = 1
+# LEFTFIELD_NORMALIZATION = 0
+# CENTERFIELD_NORMALIZATION = -5
+# RIGHTFIELD_NORMALIZATION = -3
+# DH_NORMALIZATION = 0
+
+### Miami
+# CATCHER_NORMALIZATION = 21
+# SHORTSTOP_NORMALIZATION = 7
+# SECONDBASE_NORMALIZATION = 12
+# THIRDBASE_NORMALIZATION = 8
+# FIRSTBASE_NORMALIZATION = 3
+# LEFTFIELD_NORMALIZATION = 10
+# CENTERFIELD_NORMALIZATION = 8
+# RIGHTFIELD_NORMALIZATION = 10
+# DH_NORMALIZATION = 0
+
+### ABL
+CATCHER_NORMALIZATION = 17
+SHORTSTOP_NORMALIZATION = -7
+SECONDBASE_NORMALIZATION = 8
+THIRDBASE_NORMALIZATION = 4
+FIRSTBASE_NORMALIZATION = 6
+LEFTFIELD_NORMALIZATION = 8
+CENTERFIELD_NORMALIZATION = -1
+RIGHTFIELD_NORMALIZATION = 5
 DH_NORMALIZATION = 0
 
 
@@ -76,8 +98,8 @@ BASE_PITCHING_ADJUSTMENT = 0.1035
 SP_INDIVIDUAL_PITCHING_ADJUSTMENT = 0.2083
 RP_INDIVIDUAL_PITCHING_ADJUSTMENT = 0.2083
 
-SP_BASE_ADJUST = 0.90
-SP_PITCH_ADJUST = 0.10
+SP_BASE_ADJUST = 0.85
+SP_PITCH_ADJUST = 0.15
 
 
 RP_BASE_ADJUST = 0.75
@@ -87,21 +109,31 @@ RP_PITCH_ADJUST = 0.25
 # SP_NORMALIZATION = 21
 # RP_NORMALIZATION = 20
 
-### 2056
-SP_NORMALIZATION = 16
-RP_NORMALIZATION = 6
+### 2056 PBL
+#CONTACT_PENALTY = 0
+#SP_NORMALIZATION = 21
+#RP_NORMALIZATION = 16
+
+### miami
+#SP_NORMALIZATION = 24
+#RP_NORMALIZATION = 20
+
+### ABL
+CONTACT_PENALTY = 0
+SP_NORMALIZATION = 31
+RP_NORMALIZATION = 20
 
 
 class PlayerRatings:
     def calc_catcher_defense_rating(self, fielding_ratings: PlayerFielding, scale: float) -> int:
         return (
-            fielding_ratings.catcherability/scale  * 34.5 + fielding_ratings.catcherarm/scale  * 24.5
+            fielding_ratings.catcherability/scale  * 44.5 + fielding_ratings.catcherarm/scale  * 14.5
         ) * CATCHER_ADJUSTMENT
 
     def calc_shortstop_defense_rating(self, fielding_ratings: PlayerFielding, scale: float) -> int:
         return (
             fielding_ratings.infieldrange/scale  * 50.5
-            + fielding_ratings.infieldarm/scale  * 2
+            + fielding_ratings.infieldarm/scale  * 8
             + fielding_ratings.turndoubleplay/scale  * 8
             + fielding_ratings.infielderror/scale  * 7.5
         ) * SHORTSTOP_ADJUSTMENT
@@ -116,17 +148,17 @@ class PlayerRatings:
 
     def calc_thirdbase_defense_rating(self, fielding_ratings: PlayerFielding, scale: float) -> int:
         return (
-            fielding_ratings.infieldrange/scale  * 13
+            fielding_ratings.infieldrange/scale  * 16
             + fielding_ratings.infieldarm/scale  * 22
-            + fielding_ratings.turndoubleplay/scale  * 3.25
+            + fielding_ratings.turndoubleplay/scale  * 0.25
             + fielding_ratings.infielderror/scale  * 7.5
         ) * THIRDBASE_ADJUSTMENT
 
     def calc_firstbase_defense_rating(self, fielding_ratings: PlayerFielding, scale: float) -> int:
         return (
-            fielding_ratings.infieldrange/scale  * 2
-            + fielding_ratings.infieldarm/scale  * 0.75
-            + fielding_ratings.turndoubleplay/scale  * 0.75
+            fielding_ratings.infieldrange/scale  * 4
+            + fielding_ratings.infieldarm/scale  * 0
+            + fielding_ratings.turndoubleplay/scale  * 0
             + fielding_ratings.infielderror/scale  * 2
         ) * FIRSTBASE_ADJUSTMENT
 
@@ -206,20 +238,20 @@ class PlayerRatings:
             type_adjustment = 0
 
         if potential:
-            if batting_ratings.contactpotential/scale < 6:
-                contactrating = batting_ratings.contactpotential/scale + (batting_ratings.contactpotential/scale-6) 
+            if batting_ratings.contactpotential/scale < CONTACT_PENALTY:
+                contactrating = batting_ratings.contactpotential/scale + (batting_ratings.contactpotential/scale-CONTACT_PENALTY) 
             else:
-                contactrating = batting_ratings.contactpotential/scale 
+                contactrating = batting_ratings.contactpotential/scale
             if batting_ratings.powerpotential/scale  < 0:
                 powerrating = batting_ratings.powerpotential/scale  + (batting_ratings.powerpotential/scale -6) 
             else:
-                powerrating = batting_ratings.powerpotential/scale 
+                powerrating = batting_ratings.powerpotential/scale
             if batting_ratings.eyeprotential/scale  < 0:
                 eyerating = batting_ratings.eyeprotential/scale  + (batting_ratings.eyeprotential/scale -6)
             else:
                 eyerating = batting_ratings.eyeprotential/scale 
-            if batting_ratings.kprotential/scale  < 6:
-                krating = batting_ratings.kprotential/scale  + (batting_ratings.kprotential/scale -6)
+            if batting_ratings.kprotential/scale  < CONTACT_PENALTY:
+                krating = batting_ratings.kprotential/scale  + (batting_ratings.kprotential/scale-CONTACT_PENALTY)
             else:
                 krating = batting_ratings.kprotential/scale 
             if batting_ratings.gappotential/scale  < 0:
@@ -228,37 +260,37 @@ class PlayerRatings:
                 gaprating = batting_ratings.gappotential/scale 
             if position == "C":
                 rating = (
-                    (contactrating * 18)
-                    + (gaprating * 9)
-                    + (powerrating * 18)
-                    + (eyerating * 18)
-                    + (krating * 18)
-                    + (batting_ratings.speedrating/scale * 15)
+                    (contactrating * 21)
+                    + (gaprating * 5)
+                    + (powerrating * 17)
+                    + (eyerating * 17)
+                    + (krating * 21)
+                    #+ (batting_ratings.speedrating/scale * 15)
                     + (type_adjustment * 4)
                 ) * CATCHER_BATTING_ADJUSTMENT
             else:
                 rating = (
-                    (contactrating * 18)
-                    + (gaprating * 9)
-                    + (powerrating * 18)
-                    + (eyerating * 18)
-                    + (krating * 18)
+                    (contactrating * 21)
+                    + (gaprating * 5)
+                    + (powerrating * 17)
+                    + (eyerating * 17)
+                    + (krating * 21)
                     + (type_adjustment * 4)
                 ) * BATTING_ADJUSTMENT
         else:
-            if batting_ratings.contactrating/scale  < 6:
+            if batting_ratings.contactrating/scale  < CONTACT_PENALTY:
                 contactrating = batting_ratings.contactrating/scale  + (batting_ratings.contactrating/scale -6) 
             else:
-                contactrating = batting_ratings.contactrating/scale 
+                contactrating = batting_ratings.contactrating/scale
             if batting_ratings.powerrating/scale  < 0:
                 powerrating = batting_ratings.powerrating/scale  + (batting_ratings.powerrating/scale -6) 
             else:
-                powerrating = batting_ratings.powerrating/scale 
+                powerrating = batting_ratings.powerrating/scale
             if batting_ratings.eyerating/scale  < 0:
                 eyerating = batting_ratings.eyerating/scale  + (batting_ratings.eyerating/scale -6)
             else:
                 eyerating = batting_ratings.eyerating/scale 
-            if batting_ratings.krating/scale  < 6:
+            if batting_ratings.krating/scale  < CONTACT_PENALTY:
                 krating = batting_ratings.krating/scale  + (batting_ratings.krating/scale -6)
             else:
                 krating = batting_ratings.krating/scale 
@@ -268,21 +300,21 @@ class PlayerRatings:
                 gaprating = batting_ratings.gaprating/scale 
             if position == "C":
                 rating = (
-                    (contactrating * 19)
+                    (contactrating * 21)
                     + (gaprating * 5)
-                    + (powerrating * 19)
-                    + (eyerating * 19)
-                    + (krating * 19)
-                    + (batting_ratings.speedrating/scale * 15)
+                    + (powerrating * 17)
+                    + (eyerating * 17)
+                    + (krating * 21)
+                    # + (batting_ratings.speedrating/scale * 15)
                     + (type_adjustment * 4)
                 ) * CATCHER_BATTING_ADJUSTMENT
             else:
                 rating = (
-                    (contactrating * 19)
+                    (contactrating * 21)
                     + (gaprating * 5)
-                    + (powerrating * 19)
-                    + (eyerating * 19)
-                    + (krating * 19)
+                    + (powerrating * 17)
+                    + (eyerating * 17)
+                    + (krating * 21)
                     + (type_adjustment * 4)
                 ) * BATTING_ADJUSTMENT
 
@@ -357,12 +389,12 @@ class PlayerRatings:
                 stuffrating = adjusted_stuff_rating + (adjusted_stuff_rating-6) 
             else:
                 stuffrating = adjusted_stuff_rating
-            if adjusted_movement_rating < 6:
-                movementrating = adjusted_movement_rating + (adjusted_movement_rating-6) 
+            if adjusted_movement_rating < 7:
+                movementrating = adjusted_movement_rating + (adjusted_movement_rating-7) 
             else:
                 movementrating = adjusted_movement_rating
-            if adjusted_control_rating < 0:
-                controlrating = adjusted_control_rating + (adjusted_control_rating-6)
+            if adjusted_control_rating < 7:
+                controlrating = adjusted_control_rating + (adjusted_control_rating-7)
             else:
                 controlrating = adjusted_control_rating
             return (
@@ -381,12 +413,12 @@ class PlayerRatings:
                 stuffrating = adjusted_stuff_rating + (adjusted_stuff_rating-6) 
             else:
                 stuffrating = adjusted_stuff_rating
-            if adjusted_movement_rating < 6:
-                movementrating =adjusted_movement_rating + (adjusted_movement_rating-6) 
+            if adjusted_movement_rating < 7:
+                movementrating =adjusted_movement_rating + (adjusted_movement_rating-7) 
             else:
                 movementrating = adjusted_movement_rating
-            if adjusted_control_rating < 0:
-                controlrating = adjusted_control_rating + (adjusted_control_rating-6)
+            if adjusted_control_rating < 7:
+                controlrating = adjusted_control_rating + (adjusted_control_rating-7)
             else:
                 controlrating = adjusted_control_rating
             return (
@@ -410,16 +442,16 @@ class PlayerRatings:
             adjusted_stuff_rating =  pitching_ratings.stuffrating/scale
             adjusted_movement_rating =  pitching_ratings.movementrating/scale
             adjusted_control_rating =  pitching_ratings.controlrating/scale
-            if adjusted_stuff_rating < 11:
-                stuffrating = adjusted_stuff_rating + (adjusted_stuff_rating-6) 
+            if adjusted_stuff_rating < 7:
+                stuffrating = adjusted_stuff_rating + (adjusted_stuff_rating-7) 
             else:
                 stuffrating = adjusted_stuff_rating
-            if adjusted_movement_rating < 11:
-                movementrating = adjusted_movement_rating + (adjusted_movement_rating-6) 
+            if adjusted_movement_rating < 7:
+                movementrating = adjusted_movement_rating + (adjusted_movement_rating-7) 
             else:
                 movementrating = adjusted_movement_rating
-            if  adjusted_control_rating < 0:
-                controlrating =  adjusted_control_rating + ( adjusted_control_rating-6)
+            if  adjusted_control_rating < 7:
+                controlrating =  adjusted_control_rating + ( adjusted_control_rating-7)
             else:
                 controlrating =  adjusted_control_rating
             return (
@@ -433,16 +465,16 @@ class PlayerRatings:
             adjusted_stuff_rating =  pitching_ratings.stuffpotential/scale
             adjusted_movement_rating =  pitching_ratings.movementpotential/scale
             adjusted_control_rating =  pitching_ratings.controlpotential/scale
-            if pitching_ratings.stuffpotential < 11.0:
-                stuffrating = adjusted_stuff_rating + (adjusted_stuff_rating-6.0) 
+            if pitching_ratings.stuffpotential < 9.0:
+                stuffrating = adjusted_stuff_rating + (adjusted_stuff_rating-7.0) 
             else:
                 stuffrating = adjusted_stuff_rating
-            if adjusted_movement_rating < 11.0:
-                movementrating = adjusted_movement_rating + (adjusted_movement_rating-6.0) 
+            if adjusted_movement_rating < 7.0:
+                movementrating = adjusted_movement_rating + (adjusted_movement_rating-7.0) 
             else:
                 movementrating = pitching_ratings.movementpotential
-            if adjusted_control_rating < 0:
-                controlrating = adjusted_control_rating + (adjusted_control_rating-6.0)
+            if adjusted_control_rating < 7:
+                controlrating = adjusted_control_rating + (adjusted_control_rating-7.0)
             else:
                 controlrating = adjusted_control_rating
             return (
@@ -453,76 +485,76 @@ class PlayerRatings:
                 + (pitching_ratings.stamina/scale * 0.0)
             ) * BASE_PITCHING_ADJUSTMENT
 
-    def pitch_adjust(self, rating):
-        return rating
+    def rating_ajust(self, rating, scale):
+        return (rating)*(rating)/(10*scale)
 
-    def get_pitching_ratings(self, pitching_ratings: PlayerPitching) -> [int]:
+    def get_pitching_ratings(self, pitching_ratings: PlayerPitching,  scale: float) -> [int]:
         pitches = []
 
         if pitching_ratings.fastballrating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.fastballrating))
+            pitches.append(self.rating_ajust(pitching_ratings.fastballrating, scale))
         if pitching_ratings.changeuprating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.changeuprating))
+            pitches.append(self.rating_ajust(pitching_ratings.changeuprating, scale))
         if pitching_ratings.curveballrating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.curveballrating))
+            pitches.append(self.rating_ajust(pitching_ratings.curveballrating, scale))
         if pitching_ratings.sliderrating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.sliderrating))
+            pitches.append(self.rating_ajust(pitching_ratings.sliderrating, scale))
         if pitching_ratings.sinkerrating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.sinkerrating))
+            pitches.append(self.rating_ajust(pitching_ratings.sinkerrating, scale))
         if pitching_ratings.splitterrating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.splitterrating))
+            pitches.append(self.rating_ajust(pitching_ratings.splitterrating, scale))
         if pitching_ratings.cutterrating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.cutterrating))
+            pitches.append(self.rating_ajust(pitching_ratings.cutterrating, scale))
         if pitching_ratings.forkballrating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.forkballrating))
+            pitches.append(self.rating_ajust(pitching_ratings.forkballrating, scale))
         if pitching_ratings.circlechangerating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.circlechangerating))
+            pitches.append(self.rating_ajust(pitching_ratings.circlechangerating, scale))
         if pitching_ratings.screwballrating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.screwballrating))
+            pitches.append(self.rating_ajust(pitching_ratings.screwballrating, scale))
         if pitching_ratings.knucklecurverating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.knucklecurverating))
+            pitches.append(self.rating_ajust(pitching_ratings.knucklecurverating, scale))
         if pitching_ratings.knuckleballrating > 0:
-            pitches.append(self.pitch_adjust(pitching_ratings.knuckleballrating))
+            pitches.append(self.rating_ajust(pitching_ratings.knuckleballrating, scale))
 
         return pitches
 
-    def get_pitching_potential_ratings(self, pitching_ratings: PlayerPitching) -> [int]:
+    def get_pitching_potential_ratings(self, pitching_ratings: PlayerPitching, scale: float) -> [int]:
         pitches = []
 
         if pitching_ratings.fastballpotential > 0:
-            pitches.append(pitching_ratings.fastballpotential)
+            pitches.append(self.rating_ajust(pitching_ratings.fastballpotential, scale))
         if pitching_ratings.changeuppotential > 0:
-            pitches.append(pitching_ratings.changeuppotential)
+            pitches.append(self.rating_ajust(pitching_ratings.changeuppotential, scale))
         if pitching_ratings.curveballpotential > 0:
-            pitches.append(pitching_ratings.curveballpotential)
+            pitches.append(self.rating_ajust(pitching_ratings.curveballpotential, scale))
         if pitching_ratings.sliderpotential > 0:
-            pitches.append(pitching_ratings.sliderpotential)
+            pitches.append(self.rating_ajust(pitching_ratings.sliderpotential, scale))
         if pitching_ratings.sinkerpotential > 0:
-            pitches.append(pitching_ratings.sinkerpotential)
+            pitches.append(self.rating_ajust(pitching_ratings.sinkerpotential, scale))
         if pitching_ratings.splitterpotential > 0:
-            pitches.append(pitching_ratings.splitterpotential)
+            pitches.append(self.rating_ajust(pitching_ratings.splitterpotential, scale))
         if pitching_ratings.cutterpotential > 0:
-            pitches.append(pitching_ratings.cutterpotential)
+            pitches.append(self.rating_ajust(pitching_ratings.cutterpotential, scale))
         if pitching_ratings.forkballpotential > 0:
-            pitches.append(pitching_ratings.forkballpotential)
+            pitches.append(self.rating_ajust(pitching_ratings.forkballpotential, scale))
         if pitching_ratings.circlechangepotential > 0:
-            pitches.append(pitching_ratings.circlechangepotential)
+            pitches.append(self.rating_ajust(pitching_ratings.circlechangepotential, scale))
         if pitching_ratings.screwballpotential > 0:
-            pitches.append(pitching_ratings.screwballpotential)
+            pitches.append(self.rating_ajust(pitching_ratings.screwballpotential, scale))
         if pitching_ratings.knucklecurvepotential > 0:
-            pitches.append(pitching_ratings.knucklecurvepotential)
+            pitches.append(self.rating_ajust(pitching_ratings.knucklecurvepotential, scale))
         if pitching_ratings.knuckleballpotential > 0:
-            pitches.append(pitching_ratings.knuckleballpotential)
+            pitches.append(self.rating_ajust(pitching_ratings.knuckleballpotential, scale))
 
         return pitches
 
     def calculate_individual_pitch_ratings(self, pitching_ratings, position, potential, scale):
 
         if potential:
-            pitches = self.get_pitching_potential_ratings(pitching_ratings)
+            pitches = self.get_pitching_potential_ratings(pitching_ratings, scale)
         else:
-            pitches = self.get_pitching_ratings(pitching_ratings)
-        pitches.sort()
+            pitches = self.get_pitching_ratings(pitching_ratings, scale)
+        pitches.sort(reverse=True)
 
         pitch1rating = pitches[0]/scale if len(pitches) > 0 else 0
         pitch2rating = pitches[1]/scale if len(pitches) > 1 else 0
