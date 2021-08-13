@@ -113,8 +113,8 @@ def _init_player_report(playerid, timestamp):
     player_report.starterbasepotential = 0
     player_report.starterindivpotential = 0
     player_report.starteroverallcurrent = 0
-    player_report.starterbasecurent = 0
-    player_report.starterindivrcurrent = 0
+    player_report.starterbasecurrent = 0
+    player_report.starterindivcurrent = 0
     player_report.reliefoverallpotential = 0
     player_report.reliefbasepotential = 0
     player_report.reliefindivpotential = 0
@@ -180,28 +180,56 @@ for player in players:
             player_report.starterbasepotential,
             player_report.starterindivpotential,
         ) = ratings_calc.calculate_starter_pitcher_rating(
-            pitcher_ratings, player.position, True, scale_factor
+            pitcher_ratings, player.position, "Potential", scale_factor
         )
         (
             player_report.starteroverallcurrent,
             player_report.starterbasecurrent,
             player_report.starterindivcurrent,
         ) = ratings_calc.calculate_starter_pitcher_rating(
-            pitcher_ratings, player.position, False, scale_factor
+            pitcher_ratings, player.position, "Overall", scale_factor
+        )
+        (
+            player_report.starteroverallvLeft,
+            player_report.starterbasevLeft,
+            _,
+        ) = ratings_calc.calculate_starter_pitcher_rating(
+            pitcher_ratings, player.position, "vLeft", scale_factor
+        )
+        (
+            player_report.starteroverallvRight,
+            player_report.starterbasevRight,
+            _,
+        ) = ratings_calc.calculate_starter_pitcher_rating(
+            pitcher_ratings, player.position, "vRight", scale_factor
         )
         (
             player_report.reliefoverallpotential,
             player_report.reliefbasepotential,
             player_report.reliefindivpotential,
         ) = ratings_calc.calculate_relief_pitcher_rating(
-            pitcher_ratings, player.position, True, scale_factor
+            pitcher_ratings, player.position, "Potential", scale_factor
         )
         (
             player_report.reliefoverallcurrent,
             player_report.reliefbasecurrent,
             player_report.reliefindivcurrent,
         ) = ratings_calc.calculate_relief_pitcher_rating(
-            pitcher_ratings, player.position, False, scale_factor
+            pitcher_ratings, player.position, "Overall", scale_factor
+        )
+        (
+            player_report.relieveroverallvLeft,
+            player_report.relieverbasevLeft,
+            _,
+        ) = ratings_calc.calculate_relief_pitcher_rating(
+            pitcher_ratings, player.position, "vLeft", scale_factor
+        )
+        (
+            player_report.relieveroverallvRight,
+            player_report.relieverbasevRight,
+            _,
+        ) = ratings_calc.calculate_relief_pitcher_rating(
+            pitcher_ratings, player.position, "vRight", scale_factor
         )
     else:
         batter_ratings = db_access.get_batting_record(player.id, import_date)
@@ -217,15 +245,87 @@ for player in players:
             player_report.batteroverallbattingpotential,
             player_report.batteroverallfieldingpotential,
         ) = ratings_calc.calculate_overall_batter_rating(
-            fielding_ratings, batter_ratings, player.position, True, scale_factor
+            fielding_ratings, batter_ratings, player.position, "Potential", scale_factor
         )
         (
             player_report.batteroverallcurrent,
             player_report.batteroverallbattingcurrent,
             player_report.batteroverallfieldingcurrent,
         ) = ratings_calc.calculate_overall_batter_rating(
-            fielding_ratings, batter_ratings, player.position, False, scale_factor
+            fielding_ratings, batter_ratings, player.position, "Overall", scale_factor
         )
+        (
+            player_report.batteroverallvLeft,
+            player_report.batterbattingvLeft,
+            _,
+        ) = ratings_calc.calculate_overall_batter_rating(
+            fielding_ratings, batter_ratings, player.position, "vLeft", scale_factor
+        )
+        (
+            player_report.batteroverallvRight,
+            player_report.batterbattingvRight,
+            _,
+        ) = ratings_calc.calculate_overall_batter_rating(
+            fielding_ratings, batter_ratings, player.position, "vRight", scale_factor
+        )
+
+        if fielding_ratings.catcherrating > 0:
+            (player_report.catcheroverall,_,_) = ratings_calc.calculate_overall_batter_rating(
+                fielding_ratings, batter_ratings, "C", "Potential", scale_factor
+            )
+        else:
+            player_report.catcheroverall = 0
+
+        if fielding_ratings.firstbaserating > 0:
+            (player_report.firstbaseoverall,_,_) = ratings_calc.calculate_overall_batter_rating(
+                fielding_ratings, batter_ratings, "1B", "Potential", scale_factor
+            )
+        else:
+            player_report.firstbaseoverall = 0
+
+        if fielding_ratings.secondbaserating > 0:
+            (player_report.secondbaseoverall,_,_) = ratings_calc.calculate_overall_batter_rating(
+                fielding_ratings, batter_ratings, "2B", "Potential", scale_factor
+            )
+        else:
+            player_report.secondbaseoverall = 0
+
+        if fielding_ratings.thirdbaserating > 0:
+            (player_report.thirdbaseoverall,_,_) = ratings_calc.calculate_overall_batter_rating(
+                fielding_ratings, batter_ratings, "3B", "Potential", scale_factor
+            )
+        else:
+            player_report.thirdbaseoverall = 0
+
+        if fielding_ratings.shortstoprating > 0:
+            (player_report.shortstopoverall,_,_) = ratings_calc.calculate_overall_batter_rating(
+                fielding_ratings, batter_ratings, "SS", "Potential", scale_factor
+            )
+        else:
+            player_report.shortstopoverall = 0
+
+        if fielding_ratings.leftfieldrating > 0:
+            (player_report.leftfieldoverall,_,_) = ratings_calc.calculate_overall_batter_rating(
+                fielding_ratings, batter_ratings, "LF", "Potential", scale_factor
+            )
+        else:
+            player_report.leftfieldoverall = 0
+
+
+        if fielding_ratings.centerfieldrating > 0:
+            (player_report.centerfieldoverall,_,_) = ratings_calc.calculate_overall_batter_rating(
+                fielding_ratings, batter_ratings, "CF", "Potential", scale_factor
+            )
+        else:
+            player_report.centerfieldoverall = 0
+
+        if fielding_ratings.rightfieldrating > 0:
+            (player_report.rightfieldoverall,_,_) = ratings_calc.calculate_overall_batter_rating(
+                fielding_ratings, batter_ratings, "RF", "Potential", scale_factor
+            )
+        else:
+            player_report.rightfieldoverall = 0
+
 
     db_access.add_player_report_record(player_report)
 

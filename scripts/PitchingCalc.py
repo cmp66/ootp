@@ -5,23 +5,28 @@ import datetime
 
 
 # PBL
-# player_sets = [
-#     {
-#         "season": 2055,
-#         "import_date" : "04/01/2056"
-#     },
-#     {
-#         "season": 2056,
-#         "import_date" : "10/30/2056"
-#     },
-#     {
-#         "season": 2057,
-#         "import_date" : "11/05/2057"
-#     },
-#     {
-#         "season": 2058,
-#         "import_date" : "11/29/2058"
-#     }
+player_sets = [
+    # {
+    #     "season": 2055,
+    #     "import_date" : "04/01/2056"
+    # },
+    # {
+    #     "season": 2056,
+    #     "import_date" : "10/30/2056"
+    # },
+    # {
+    #     "season": 2057,
+    #     "import_date" : "11/05/2057"
+    # },
+    # {
+    #     "season": 2058,
+    #     "import_date" : "11/29/2058"
+    # },
+    {
+        "season": 2059,
+        "import_date" : "12/28/2059"
+    }
+    
 
 # ]
 
@@ -34,24 +39,28 @@ import datetime
 #]
 
 #ABL
-player_sets = [
-   {
-       "season": 2047,
-       "import_date" : "11/24/2047"
-   },
-   {
-        "season": 2048,
-        "import_date" : "12/13/2048"
-    },
+#player_sets = [
+#    {
+#        "season": 2047,
+#        "import_date" : "11/24/2047"
+#    },
+#    {
+#         "season": 2048,
+#         "import_date" : "12/13/2048"
+#     },
+    # {
+    #     "season": 2049,
+    #     "import_date" : "11/22/2049"
+    # },
 ]
 
 
-db_access = OOTPDbAccess('abl')
+db_access = OOTPDbAccess('ootp')
 ratings_calc = PlayerRatings()
 
 
-scale = 10.0
-usePotential = True
+scale = 1.0
+calc_type = "Overall"
 
 players = {}
 for i in range(500):
@@ -71,6 +80,10 @@ for target_position in ["SP","RP"]:
             player_id = stat_record.playerid
             player_record = db_access.get_player_by_date(player_id, import_date)
 
+            if player_record is None:
+                #print (f'No player record with id:{player_id} for import data {player_set["import_date"]}')
+                continue
+
             if player_record.position != target_position:
                 continue
             elif stat_record.battersfaced < 100:
@@ -83,14 +96,15 @@ for target_position in ["SP","RP"]:
 
             if target_position == "SP":
                 rating, base, indiv = ratings_calc.calculate_starter_pitcher_rating(
-                    pitching_record, player_record.position, usePotential, scale
+                    pitching_record, player_record.position, calc_type, scale
                 )
             else:
                 rating, base, indiv = ratings_calc.calculate_relief_pitcher_rating(
-                    pitching_record, player_record.position, usePotential, scale
+                    pitching_record, player_record.position, calc_type, scale
                 )
 
             war_rate = stat_record.pitchingwar / stat_record.battersfaced
+            #war.append(10-stat_record.fip)
             war.append(war_rate)
             ratings.append(rating)
             players[rating].append(player_record.name)

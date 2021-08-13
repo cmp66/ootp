@@ -82,19 +82,8 @@ def importPlayerPitching(dirname, import_date, db_access):
                         db_access.add_player_pitching_record(player)
 
 
-def importPlayerStats(filename, season, db_access):
-    player_parser = OOTPParser()
-    if os.path.isfile(filename):
-        with open(filename, "r", encoding="windows-1252") as handle:
-            players = player_parser.parse_stats_file(handle, season)
-
-            for player in players:
-                db_access.add_player_stats_record(player)
-
-
 datestamp = sys.argv[1]
-season = int(sys.argv[2])
-save = sys.argv[3]
+save = sys.argv[2]
 import_date = datetime.datetime.strptime(datestamp, "%m/%d/%Y")
 import_datestring = date_time = import_date.strftime("%d-%b-%Y")
 
@@ -127,4 +116,3 @@ importOOTPFiles(f'./files/{save}/{import_datestring}', import_date, db_access)
 # importPlayerFielding(f'./files/{import_datestring}/Draft/Fielding', import_date, db_access)
 # importPlayerPitching(f'./files/{import_datestring}/Draft/Pitching', import_date, db_access)
 
-#importPlayerStats(f"./files/ABL-Stats-2048.html", season, db_access)

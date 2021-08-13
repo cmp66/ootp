@@ -10,7 +10,7 @@ datestamp = sys.argv[2]
 reference_date = sys.argv[3]
 scale_factor = sys.argv[4]
 save = sys.argv[5]
-pos = None #sys.argv[6] 
+pos = sys.argv[6] 
 
 scale = float(scale_factor)
 
@@ -35,49 +35,49 @@ print(f'Evaluationg {player.name}')
 if pos is None:
     for target_position in ["C", "1B", "2B", "SS", "3B", "LF", "CF", "RF"]:
         rating, brating, frating = ratings_calc.calculate_overall_batter_rating(
-            fielding_record, batting_record, target_position, False, scale
+            fielding_record, batting_record, target_position, "Potential", scale
         )
 
         prating, pbrating, pfrating = ratings_calc.calculate_overall_batter_rating(
-            fielding_record, batting_record, target_position, True, scale
+            fielding_record, batting_record, target_position, "Overall", scale
         )
 
         print (f'Position: {target_position}  Current: {rating}  Potential" {prating}')
 
-        difference_record = ratings_calc.get_batting_difference_record(batting_record, ref_batting_record)
-        print(difference_record)
+        #difference_record = ratings_calc.get_batting_difference_record(batting_record, ref_batting_record)
+        #print(difference_record)
 else:
     if pos in ["SP"]:
         rating, brating, indrating = ratings_calc.calculate_starter_pitcher_rating(
-            pitching_record, pos, False, scale
+            pitching_record, pos, "Potential", scale
         )
 
         prating, pbrating, pindrating = ratings_calc.calculate_starter_pitcher_rating(
-            pitching_record, pos, True, scale
+            pitching_record, pos, "Overall", scale
         )
 
         print (f'Position: {pos}  Current: {rating}  Potential" {prating}')
     elif pos in ["RP", "CL"]:
         rating, brating, indrating = ratings_calc.calculate_relief_pitcher_rating(
-            pitching_record, pos, False, scale
+            pitching_record, pos, "Potential", scale
         )
 
         prating, pbrating, pindrating = ratings_calc.calculate_relief_pitcher_rating(
-            pitching_record, pos, True, scale
+            pitching_record, pos, "Overall", scale
         )
 
         print (f'Position: {pos}  Current: {rating}  Potential" {prating}')
     else:
         rating, brating, frating = ratings_calc.calculate_overall_batter_rating(
-            fielding_record, batting_record, pos, False, scale
+            fielding_record, batting_record, pos, "Potential", scale
         )
 
         prating, pbrating, pfrating = ratings_calc.calculate_overall_batter_rating(
-            fielding_record, batting_record, pos, True, scale
+            fielding_record, batting_record, pos, "Overall", scale
         )
 
         print (f'Position: {pos}  Current: {rating}  Potential" {prating}')
 
-    difference_record = ratings_calc.get_pitching_difference_record(batting_record, ref_batting_record)
-    print(difference_record)
+    #difference_record = ratings_calc.get_pitching_difference_record(batting_record, ref_batting_record)
+    #print(difference_record)
     

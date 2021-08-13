@@ -1,4 +1,4 @@
-from db import OOTPDbAccess, PlayerReports, PlayerStats
+from db import OOTPDbAccess, PlayerReports, PlayerStats, PlayerBatting
 from parser import OOTPParser
 from ratings import PlayerRatings
 
@@ -39,7 +39,7 @@ else:
     players = []
     parser = OOTPParser()
     if os.path.isfile(player_file):
-        with open(player_file, "r", encoding="windows-1252") as handle:
+        with open(player_file, "r", encoding="utf-8") as handle:
             for export_player in parser.parse_exports_file(handle):
                 db_player = (db_access.get_player_by_date(export_player["id"], import_date))
 
@@ -52,18 +52,25 @@ else:
 
 
 print(
-    "ID,NAME,POS,TEAM,ORG,LEAGUE,LEVEL,AGE,CURRENT,POTENTIAL,"
+    "NAME,ID,POS,TEAM,ORG,LEAGUE,LEVEL,AGE,CURRENT,POTENTIAL,"
     + "PITCH DIFF CURRENT,PITCH DIFF POT,BAT DIFF CURRENT,BAT DIF POT,"
     + "START OVR CUR,START OVR POT,RELIEF OVR CUR,RELIEF OVR POT,BAT OVR CUR,BAT OVR POT,"
     + "START BASE CUR,START INDIV CUR,START BASE POT, START INDIV POT,"
     + "RELIEF BASE CUR,RELIEF INDIV CUR,RELIEF BASE POT,RELIEF INDIV POT,"
-    + "BAT HIT CUR,BAT FIELD CUR,BAT HIT POT,BAT FIELD POT,BATTER WAR,PITCHER WAR,MLB YEARS,"
+    + "BAT HIT CUR,BAT FIELD CUR,BAT HIT POT,BAT FIELD POT,"
+    + "START OVR LEFT,START BASE LEFT,START OVR RIGHT,START BASE RIGHT,"
+    + "REL OVR LEFT,REL BASE LEFT,REL OVR RIGHT,REL BASE RIGHT,"
+    + "BAT OVR LEFT,BAT BASE LEFT,BAT OVR RIGHT,BAT BASE RIGHT,"
+    + "BABIP,BABIP POT,"
+    + "C OVR,1B OVR,2B OVR,3B OVR,SS OVR,LF OVR,CF OVR,RF OVR,"
+    + "BATTER WAR,PITCHER WAR,MLB YEARS,"
     + "WORK ETHIC,INTELLIGENCE,LEADER,GREED,LOYALTY,PERSONALITY"
 )
 
 for player in players:
     player_report = db_access.get_player_report(player.id, import_date)
     player_stats = db_access.get_player_stats(player.id, season)
+    player_batting = db_access.get_batting_record(player.id, import_date)
 
     if player_report is None:
         player_report = _init_missing_player_report(player)
@@ -81,7 +88,7 @@ for player in players:
         continue
 
     print(
-        f"{player.id},{player.name},{player.position},{player.team},"
+        f"{player.name},{player.id},{player.position},{player.team},"
         + f"{player.org},{player.league},{player.level},{player.age},"
         + f"{player.overall},{player.potential},"
         + f"{player_report.pitcherratingsdiffcurrent},{player_report.pitcherratingsdiffpotential},"
@@ -95,6 +102,17 @@ for player in players:
         + f"{player_report.reliefbasepotential},{player_report.reliefindivpotential},"
         + f"{player_report.batteroverallbattingcurrent},{player_report.batteroverallfieldingcurrent},"
         + f"{player_report.batteroverallbattingpotential},{player_report.batteroverallfieldingpotential},"
+        + f"{player_report.starteroverallvLeft},{player_report.starterbasevLeft},"
+        + f"{player_report.starteroverallvRight},{player_report.starterbasevRight},"
+        + f"{player_report.relieveroverallvLeft},{player_report.relieverbasevLeft},"
+        + f"{player_report.relieveroverallvRight},{player_report.relieverbasevRight},"
+        + f"{player_report.batteroverallvLeft},{player_report.batterbattingvLeft},"
+        + f"{player_report.batteroverallvRight},{player_report.batterbattingvRight},"
+        + f"{player_batting.babipoverall},{player_batting.babippotential},"
+        + f"{player_report.catcheroverall},{player_report.firstbaseoverall},"
+        + f"{player_report.secondbaseoverall},{player_report.thirdbaseoverall},"
+        + f"{player_report.shortstopoverall},{player_report.leftfieldoverall},"
+        + f"{player_report.centerfieldoverall},{player_report.leftfieldoverall},"
         + f"{battingwar},{pitchingwar},{player.majorleagueyears},"
         + f"{player.workethic},{player.intelligence},{player.leader},{player.greed}, {player.loyalty},{player.personality}"
     )

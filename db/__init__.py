@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 import os
+import datetime
 
 Base = declarative_base()
 
@@ -11,49 +12,51 @@ Base = declarative_base()
 class Player(Base):
     __tablename__ = "players"
 
+    default_date = datetime.datetime.strptime("01/01/1900", "%m/%d/%Y")
+
     id = Column(Integer, primary_key=True)
     timestamp = Column(Date, primary_key=True)
     position = Column(String(20))
-    name = Column(String(64))
-    team = Column(String(32))
-    org = Column(String(32))
-    league = Column(String(32))
-    level = Column(String(32))
-    dob = Column(Date)
-    age = Column(Integer)
-    height = Column(Integer)
-    weight = Column(Integer)
+    name = Column(String(128))
+    team = Column(String(32), default='')
+    org = Column(String(32), default='')
+    league = Column(String(32), default='')
+    level = Column(String(32), default='')
+    dob = Column(Date, default=default_date)
+    age = Column(Integer, default=0)
+    height = Column(Integer, default=0)
+    weight = Column(Integer, default=0)
     bats = Column(String(32))
     overall = Column(Integer)
     potential = Column(Integer)
     throws = Column(String(32))
-    leader = Column(String(32))
-    loyalty = Column(String(32))
-    adaptability = Column(String(32))
-    greed = Column(String(32))
-    workethic = Column(String(32))
-    intelligence = Column(String(32))
-    personality = Column(String(32))
-    injury = Column(String(32))
-    competition = Column(String(32))
-    hscol = Column(String(32))
-    salary = Column(Integer)
-    contractyears = Column(Integer)
-    yearsleft = Column(Integer)
-    contractvalue = Column(Integer)
-    totalyears = Column(Integer)
-    majorleagueyears = Column(Integer)
-    majorleaguedays = Column(Integer)
-    proyears = Column(Integer)
-    draftleague = Column(String(32))
-    draftteam = Column(String(32))
-    draftyear = Column(Integer)
-    draftround = Column(Integer)
-    draftsupplimental = Column(Integer)
-    draftpick = Column(Integer)
-    overallpick = Column(Integer)
-    discoveryyear = Column(Integer)
-    discoveryteam = Column(String(32))
+    leader = Column(String(32), default="")
+    loyalty = Column(String(32), default="")
+    adaptability = Column(String(32), default="")
+    greed = Column(String(32), default="")
+    workethic = Column(String(32), default="")
+    intelligence = Column(String(32), default="")
+    personality = Column(String(32), default="")
+    injury = Column(String(32), default="")
+    competition = Column(String(32), default="")
+    hscol = Column(String(32), default="")
+    salary = Column(Integer, default=0)
+    contractyears = Column(Integer, default=0)
+    yearsleft = Column(Integer, default=0)
+    contractvalue = Column(Integer, default=0)
+    totalyears = Column(Integer, default=0)
+    majorleagueyears = Column(Integer, default=0)
+    majorleaguedays = Column(Integer, default=0)
+    proyears = Column(Integer, default=0)
+    draftleague = Column(String(32), default="")
+    draftteam = Column(String(32),default="")
+    draftyear = Column(Integer, default=0)
+    draftround = Column(Integer, default=0)
+    draftsupplimental = Column(Integer, default=0)
+    draftpick = Column(Integer, default=0)
+    overallpick = Column(Integer, default=0)
+    discoveryyear = Column(Integer, default=0)
+    discoveryteam = Column(String(32), default="")
 
     def __repr__(self):
         return f"<Player(id={self.id}, name={self.name})>"
@@ -93,6 +96,8 @@ class PlayerBatting(Base):
     speedrating = Column(Integer)
     stealrating = Column(Integer)
     baserunningrating = Column(Integer)
+    babipoverall = Column(Integer)
+    babippotential = Column(Integer)
 
     def __repr__(self):
         return f"<PlayerBatting(id={self.playerid}, name={self.name})>"
@@ -197,6 +202,13 @@ class PlayerStats(Base):
     pitchingwar = Column(Float)
     zonerating = Column(Float)
     defeff = Column(Float)
+    woba = Column(Float)
+    wrcplus = Column(Float)
+    babip = Column(Float)
+    kminuswalk = Column(Float)
+    fip = Column(Float)
+    opsplus = Column(Float)
+    whip = Column(Float)
 
 
 class PlayerReports(Base):
@@ -230,8 +242,27 @@ class PlayerReports(Base):
     batteroverallcurrent = Column(Integer, default=0)
     batteroverallbattingcurrent = Column(Integer, default=0)
     batteroverallfieldingcurrent = Column(Integer, default=0)
-
-
+    starteroverallvLeft = Column(Integer, default=0)
+    starterbasevLeft = Column(Integer, default=0)
+    starteroverallvRight = Column(Integer, default=0)
+    starterbasevRight = Column(Integer, default=0)
+    relieveroverallvLeft = Column(Integer, default=0)
+    relieverbasevLeft = Column(Integer, default=0)
+    relieveroverallvRight = Column(Integer, default=0)
+    relieverbasevRight = Column(Integer, default=0)
+    batteroverallvLeft = Column(Integer, default=0)
+    batterbattingvLeft = Column(Integer, default=0)
+    batteroverallvRight = Column(Integer, default=0)
+    batterbattingvRight = Column(Integer, default=0)
+    catcheroverall = Column(Integer, default=0)
+    firstbaseoverall = Column(Integer, default=0)
+    secondbaseoverall = Column(Integer, default=0)
+    thirdbaseoverall = Column(Integer, default=0)
+    shortstopoverall = Column(Integer, default=0)
+    leftfieldoverall = Column(Integer, default=0)
+    centerfieldoverall = Column(Integer, default=0)
+    rightfieldoverall = Column(Integer, default=0)
+    
 class OOTPDbAccess:
     def __init__(self, save_name):
         type = os.environ["DB_TYPE"]
@@ -280,6 +311,12 @@ class OOTPDbAccess:
             print(f"adding batting record for player {player_batting_record.name}")
             self.session.add(player_batting_record)
             self.session.commit()
+        
+    def update_player_batting_record(self, player_batting_record):
+        print(f"updating batting record for player {player_batting_record.name}")
+        self.session.add(player_batting_record)
+        self.session.commit()
+
 
     def add_player_fielding_record(self, player_fielding_record):
         existing_user = (
@@ -372,7 +409,7 @@ class OOTPDbAccess:
             self.session.query(PlayerBatting)
             .filter(PlayerBatting.playerid == id)
             .filter(PlayerBatting.timestamp == timestamp)
-            .first()
+            .first()\
         )
 
     def get_pitching_record(self, id, timestamp):
@@ -409,6 +446,17 @@ class OOTPDbAccess:
 
     def get_all_players_by_date(self, import_date):
         return self.session.query(Player).filter(Player.timestamp == import_date)
+
+    def get_all_players(self):
+        return self.session.query(Player)
+
+    def get_all_batting_records_by_date(self, timestamp):
+        return self.session.query(PlayerBatting).filter(PlayerBatting.timestamp == timestamp)
+
+    def get_all_timestamps(self):
+        timestamps = self.session.query(PlayerBatting.timestamp).group_by(PlayerBatting.timestamp).all()
+        return [value for value, in timestamps]
+
 
     def get_all_mlb_players_by_date(self, import_date):
         return (
