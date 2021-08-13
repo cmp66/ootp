@@ -4,6 +4,7 @@ black
 html5lib
 mysql-connector-python
 lxml
+pylightxl
 pymysql
 scipy
 sqlalchemy

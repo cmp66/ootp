@@ -21,6 +21,10 @@ player_sets = [
     {
         "season": 2058,
         "import_date" : "11/29/2058"
+    },
+    {
+        "season": 2059,
+        "import_date" : "12/28/2059"
     }
 ]
 
@@ -42,6 +46,10 @@ player_sets = [
 #         "season": 2048,
 #         "import_date" : "12/13/2048"
 #     },
+#     {
+#         "season": 2049,
+#         "import_date" : "11/22/2049"
+#     }, 
 # ]
 
 
@@ -49,7 +57,7 @@ db_access = OOTPDbAccess("ootp")
 ratings_calc = PlayerRatings()
 
 scale = 1.0
-usePotential = False
+calc_type = "Overall"
 players = {}
 for i in range(201):
     players[i] = []
@@ -69,6 +77,10 @@ for target_position in ["C", "1B", "2B", "SS", "3B", "LF", "CF", "RF"]:
             #print (f'Processsing stat record for id {player_id}')
             player_record = db_access.get_player_by_date(player_id, import_date)
 
+            if player_record is None:
+                #print (f'No player record with id:{player_id} for import data {player_set["import_date"]}')
+                continue
+
             if player_record.position != target_position:
                 continue
             elif stat_record.plateapp < 75:
@@ -78,7 +90,7 @@ for target_position in ["C", "1B", "2B", "SS", "3B", "LF", "CF", "RF"]:
             batting_record = db_access.get_batting_record(player_id, import_date)
 
             rating, brating, frating = ratings_calc.calculate_overall_batter_rating(
-                fielding_record, batting_record, player_record.position, usePotential, scale 
+                fielding_record, batting_record, player_record.position, calc_type, scale 
             )
 
             #print (f'Got rating {rating} for id {player_id}')
